@@ -114,6 +114,53 @@
   @keyframes fill { 0%{ width:0; } 40%,100%{ width: 100%; } }
   .doc-field .chk { width: 17px; height: 17px; border-radius: 50%; background: #e3f6ec; display: grid; place-items: center; flex-shrink: 0; }
   .doc-field .chk svg { width: 10px; height: 10px; color: #18a558; }
+  /* Paper sheet with self-writing pen */
+  .paper-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow-md); padding: 18px 20px 20px;
+    transform: rotate(-2.5deg); margin-top: 22px; margin-left: -26px; width: 86%;
+    position: relative; animation: floaty2 7s ease-in-out infinite; animation-delay: .8s;
+  }
+  .paper-card .pc-title { font-size: 11.5px; font-weight: 700; color: var(--blue-700); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .paper-card .pc-title svg { width: 14px; height: 14px; color: var(--blue-500); }
+  .pen-lines { position: relative; }
+  .pen-line { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .pen-line .pl-lbl { font-size: 10px; color: var(--muted); width: 48px; flex-shrink: 0; }
+  .pen-line .pl-ink { height: 8px; flex: 1; border-bottom: 1.5px dashed var(--blue-100); position: relative; }
+  /* «рукописная» волнистая линия, появляющаяся за ручкой */
+  .pen-line .pl-ink::after {
+    content: ""; position: absolute; left: 0; bottom: -2px; height: 7px; width: 0;
+    background:
+      repeating-linear-gradient(100deg, var(--blue-600) 0 2px, transparent 2px 5px);
+    border-radius: 2px; opacity: .85;
+    animation: write 9s linear infinite;
+  }
+  .pen-line:nth-child(1) .pl-ink::after { animation-delay: 0s; }
+  .pen-line:nth-child(2) .pl-ink::after { animation-delay: 3s; }
+  .pen-line:nth-child(3) .pl-ink::after { animation-delay: 6s; }
+  @keyframes write {
+    0% { width: 0; }
+    27% { width: 100%; }
+    100% { width: 100%; }
+  }
+  /* сама ручка бегает по строкам */
+  .pen {
+    position: absolute; left: 56px; top: -6px; width: 30px; height: 30px; z-index: 2;
+    animation: penmove 9s linear infinite;
+    filter: drop-shadow(0 3px 5px rgba(16,58,102,.3));
+  }
+  .pen svg { width: 100%; height: 100%; transform: rotate(8deg); }
+  @keyframes penmove {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(150px, 0) rotate(-4deg); }
+    30%  { transform: translate(0, 20px) rotate(2deg); }
+    55%  { transform: translate(150px, 20px) rotate(-4deg); }
+    60%  { transform: translate(0, 40px) rotate(2deg); }
+    85%  { transform: translate(150px, 40px) rotate(-4deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  @media (max-width: 1320px){ .paper-card { margin-left: 0; } }
+
   /* floating mini badges */
   .art-badge {
     position: absolute; background: #fff; border: 1px solid var(--line);
@@ -405,6 +452,22 @@
       <div class="doc-field"><span class="lbl">ИНН / КПП</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
       <div class="doc-field"><span class="lbl">ОГРН</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
       <div class="doc-field"><span class="lbl">Адрес</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+    </div>
+
+    <!-- листок-анкета: ручка сама бегает и заполняет строки -->
+    <div class="paper-card">
+      <div class="pc-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Анкета участника — заполняется
+      </div>
+      <div class="pen-lines">
+        <span class="pen">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z" fill="#1c64c4" stroke="#103a66" stroke-width="1.2" stroke-linejoin="round"/><path d="M15 5l4 4" stroke="#e3eefb" stroke-width="1.2"/></svg>
+        </span>
+        <div class="pen-line"><span class="pl-lbl">Орг-ция</span><span class="pl-ink"></span></div>
+        <div class="pen-line"><span class="pl-lbl">ИНН</span><span class="pl-ink"></span></div>
+        <div class="pen-line"><span class="pl-lbl">Опыт</span><span class="pl-ink"></span></div>
+      </div>
     </div>
     <div class="art-badge b-fns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4"/></svg> Данные из ФНС</div>
     <div class="art-badge b-docx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg> .docx / .pdf</div>
