@@ -7,7 +7,7 @@
 <meta name="description" content="ТендерДоки — первый в России сервис, который сам скачивает документацию закупки, распознаёт анкеты и формы и заполняет их данными вашей организации. Вставьте ссылку на тендер — получите готовый пакет заявки." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Russo+One&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root {
     --blue-900: #0a2540;
@@ -68,7 +68,7 @@
     border-bottom: 1px solid var(--line);
   }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-  .logo { display: flex; align-items: center; gap: 11px; font-family: 'Russo One', 'Inter', sans-serif; font-weight: 400; font-size: 20px; letter-spacing: .01em; }
+  .logo { display: flex; align-items: center; gap: 11px; font-family: 'Sabaq', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: .01em; }
   .logo-mark {
     width: 38px; height: 38px; border-radius: 11px;
     background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
@@ -105,7 +105,7 @@
   .sheet-sub { text-align:center; font-size: 11px; color: var(--muted); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
   .typed-row { margin-bottom: 13px; }
   .t-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 3px; }
-  .t-val { font-size: 13.5px; font-weight: 600; color: var(--blue-800); border-bottom: 1.5px solid var(--blue-100); min-height: 21px; padding-bottom: 2px; white-space: nowrap; overflow: hidden; }
+  .t-val { font-size: 12.5px; letter-spacing: -.01em; font-weight: 600; color: var(--blue-800); border-bottom: 1.5px solid var(--blue-100); min-height: 21px; padding-bottom: 2px; white-space: nowrap; overflow: hidden; }
   .t-val.active { border-bottom-color: var(--blue-400); }
   .t-val .caret { display:inline-block; width: 2px; height: 13px; background: var(--blue-600); margin-left: 2px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
@@ -145,7 +145,7 @@
   }
   .hero p.lead { font-size: clamp(16px, 1.95vw, 20px); line-height: 1.65; color: var(--muted); max-width: 640px; margin-bottom: 36px; text-align: justify; text-justify: inter-word; hyphens: auto; }
   .hero p.lead b { color: var(--blue-700); font-weight: 700; }
-  .brand-word { font-family: 'Russo One', 'Inter', sans-serif; font-weight: 400; letter-spacing: .01em; }
+  .brand-word { font-family: 'Sabaq', sans-serif; font-weight: 700; letter-spacing: .01em; }
 
   /* ---------- Link input (the core idea) ---------- */
   .linkbox {
@@ -390,18 +390,18 @@
       <div class="sheet-head">Заявка на участие</div>
       <div class="sheet-sub">Форма 2 · Анкета участника закупки</div>
       <div class="typed-row"><div class="t-lbl">Наименование организации</div><div class="t-val" id="tf0"></div></div>
-      <div class="typed-row"><div class="t-lbl">ИНН / КПП</div><div class="t-val" id="tf1"></div></div>
+      <div class="typed-row"><div class="t-lbl">ИНН</div><div class="t-val" id="tf1"></div></div>
       <div class="typed-row"><div class="t-lbl">ОГРН</div><div class="t-val" id="tf2"></div></div>
       <div class="typed-row"><div class="t-lbl">Юридический адрес</div><div class="t-val" id="tf3"></div></div>
       <div class="typed-row"><div class="t-lbl">Согласие с условиями закупки</div><div class="t-val" id="tf4"></div></div>
       <div class="stamp" id="stamp">Заполнено<br>автоматически</div>
-      <div class="sheet-note">пример заполнения · данные иллюстративные</div>
+      <div class="sheet-note">пример автоматического заполнения формы</div>
     </div>
   </div>
   <div class="wrap">
     <div class="pill"><span class="dot"></span> Первый в России сервис автозаполнения тендерных заявок</div>
     <h1>Вставьте ссылку на тендер — <span class="grad">получите готовый пакет заявки</span></h1>
-    <p class="lead">Одна ссылка — и <span class="brand-word" style="color: var(--blue-700);">ТендерДоки</span> сам скачает документацию закупки, найдёт все анкеты и формы, заполнит их данными вашей организации и <b>проведёт юридический анализ заказчика и проекта договора</b>. Вам останется только проверить и подать.</p>
+    <p class="lead"><span style="font-weight: 600; color: var(--ink); display: block; margin-bottom: 6px;">Одна ссылка — и быстрое достижение цели без ущерба для качества и точности.</span><span class="brand-word" style="color: var(--blue-700);">ТендерДоки</span> сам скачает документацию закупки, найдёт все анкеты и формы, заполнит их данными вашей организации и <b>проведёт юридический анализ заказчика и проекта договора</b>. Вам останется только проверить и подать.</p>
 
     <div class="linkbox">
       <div class="field">
@@ -476,10 +476,10 @@
 <!-- ============ FEATURES ============ -->
 <section class="sec" id="why" style="background: var(--blue-50); border-block: 1px solid var(--line);">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal" style="max-width: 880px;">
       <div class="eyebrow">Возможности</div>
       <h2>Почему <span class="brand-word" style="color: var(--blue-600);">ТендерДоки</span></h2>
-      <p><b style="color: var(--ink);">Ноль ошибок и часы сэкономленного времени.</b> Опечатка в реквизитах или пропущенная форма — и заявку отклонят. ТендерДоки подставляет данные автоматически и всегда одинаково точно, а пакет заявки собирает за минуты — вместо нескольких часов ручной работы.</p>
+      <p style="text-align: justify; text-justify: inter-word; hyphens: auto; max-width: 860px; margin: 0 auto;"><b style="color: var(--ink);">Ноль ошибок и часы сэкономленного времени.</b> Опечатка в реквизитах или пропущенная форма — и заявку отклонят. <span class="brand-word">ТендерДоки</span> подставляет данные автоматически и всегда одинаково точно, а пакет заявки собирает за минуты — вместо нескольких часов ручной работы.</p>
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
@@ -702,10 +702,10 @@
   (function typedSheet(){
     if (!document.getElementById('tf0')) return;
     const fields = [
-      ['tf0', 'ООО «Вектор Плюс»'],
-      ['tf1', '7712345678 / 771201001'],
-      ['tf2', '1207700123456'],
-      ['tf3', 'г. Москва, ул. Строителей, д. 12'],
+      ['tf0', 'ООО «Компания Нефтересурс»'],
+      ['tf1', '5501260168'],
+      ['tf2', '1145543037463'],
+      ['tf3', '644103, г. Омск, ул. Транссибирская, д. 6'],
       ['tf4', 'Подтверждаем ✓'],
     ];
     const stamp = document.getElementById('stamp');
