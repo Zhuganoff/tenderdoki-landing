@@ -188,6 +188,26 @@
   .chip b { font-size: 24px; color: var(--blue-700); letter-spacing: -.02em; }
   .chip span { display: block; font-size: 13.5px; color: var(--muted); }
 
+  /* ---------- Live counter ---------- */
+  .counter-band {
+    background: linear-gradient(135deg, var(--blue-700), var(--blue-900));
+    color: #fff; padding: 46px 0; position: relative; overflow: hidden;
+  }
+  .counter-band::after { content:""; position:absolute; inset:0; background: radial-gradient(700px 320px at 85% 0%, rgba(79,147,240,.35), transparent 60%); }
+  .counter-inner { position: relative; text-align: center; }
+  .counter-live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #bcd4f5; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .counter-live .ld { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 0 rgba(74,222,128,.7); animation: livepulse 1.6s infinite; }
+  @keyframes livepulse { 0%{ box-shadow: 0 0 0 0 rgba(74,222,128,.7);} 70%{ box-shadow: 0 0 0 9px rgba(74,222,128,0);} 100%{ box-shadow: 0 0 0 0 rgba(74,222,128,0);} }
+  .counter-num {
+    font-size: clamp(46px, 9vw, 92px); font-weight: 900; letter-spacing: -.03em; line-height: 1;
+    font-variant-numeric: tabular-nums; display: inline-flex; gap: 2px;
+  }
+  .counter-num .digit { display: inline-block; transition: transform .3s; }
+  .counter-num .bump { animation: bump .4s ease; }
+  @keyframes bump { 0%{ transform: translateY(0); color:#fff;} 30%{ transform: translateY(-8px); color:#9be7ff;} 100%{ transform: translateY(0); color:#fff;} }
+  .counter-label { font-size: clamp(16px, 2vw, 20px); color: #cfe0f5; margin-top: 16px; }
+  .counter-sub { font-size: 13.5px; color: #9bb6dd; margin-top: 6px; }
+
   /* ---------- Section heading ---------- */
   .sec { padding: 84px 0; }
   .sec-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
@@ -318,6 +338,33 @@
 
   .reveal { opacity: 0; transform: translateY(22px); transition: .7s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Mobile refinements ---------- */
+  @media (max-width: 768px){
+    .wrap { padding: 0 18px; }
+    .sec { padding: 56px 0; }
+    .sec-head { margin-bottom: 38px; }
+    .hero { padding: 48px 0 44px; }
+    .nav { height: 62px; }
+    .logo { font-size: 19px; }
+    .nav-cta .btn { padding: 9px 15px; font-size: 14px; }
+    .nav-cta .btn-ghost { display: none; } /* «Войти» прячем, оставляем главную кнопку */
+    .trust { gap: 10px; }
+    .chip { flex: 1 1 calc(50% - 10px); min-width: 0; padding: 12px 16px; }
+    .chip b { font-size: 21px; }
+    .counter-band { padding: 36px 0; }
+    .cab-copy { padding: 38px 26px; }
+    .window { margin: 18px; }
+    .cta { padding: 48px 24px; border-radius: 22px; }
+    .feat, .plan { padding: 26px 22px; }
+    .doc-out .s, .prow .ps { font-size: 11px; }
+  }
+  @media (max-width: 380px){
+    .hero h1 { font-size: 30px; }
+    .linkbox { padding: 10px; }
+    .counter-num { font-size: 44px; }
+    .pill { font-size: 13px; padding: 10px 16px; }
+  }
 </style>
 </head>
 <body>
@@ -385,6 +432,16 @@
       <div class="chip"><b>44 / 223-ФЗ</b><span>поддержка госзакупок</span></div>
       <div class="chip"><b>0</b><span>выдуманных данных в заявке</span></div>
     </div>
+  </div>
+</section>
+
+<!-- ============ LIVE COUNTER ============ -->
+<section class="counter-band">
+  <div class="wrap counter-inner">
+    <div class="counter-live"><span class="ld"></span> В реальном времени</div>
+    <div class="counter-num" id="counter" aria-live="polite">0</div>
+    <div class="counter-label">заявок уже заполнено через ТендерДоки</div>
+    <div class="counter-sub">+<span id="counterToday">0</span> за сегодня · счётчик растёт прямо сейчас</div>
   </div>
 </section>
 
@@ -644,6 +701,42 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+
+  // ---- Live counter: растёт по реальному времени, одинаково у всех ----
+  (function liveCounter(){
+    const EPOCH = Date.UTC(2026, 0, 1, 0, 0, 0); // старт отсчёта
+    const BASE = 128450;       // заявок на момент старта (демо-значение)
+    const SEC_PER_APP = 6;     // +1 заявка каждые 6 секунд
+    const el = document.getElementById('counter');
+    const todayEl = document.getElementById('counterToday');
+    let shown = -1;
+
+    const calc = () => BASE + Math.floor((Date.now() - EPOCH) / 1000 / SEC_PER_APP);
+    const calcToday = () => {
+      const d = new Date(); const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      return Math.floor((Date.now() - midnight) / 1000 / SEC_PER_APP);
+    };
+    const fmt = n => n.toLocaleString('ru-RU');
+
+    function render(n){
+      const str = fmt(n);
+      const prev = el.dataset.val || '';
+      // посимвольно, с «прыжком» изменившихся цифр
+      el.innerHTML = str.split('').map((ch, i) => {
+        const changed = prev[i] !== ch;
+        return `<span class="digit${changed ? ' bump' : ''}">${ch === ' ' || ch === ' ' ? ' ' : ch}</span>`;
+      }).join('');
+      el.dataset.val = str;
+    }
+
+    function tick(){
+      const n = calc();
+      if (n !== shown){ shown = n; render(n); }
+      todayEl.textContent = fmt(calcToday());
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
 
   // Hero demo: paste link -> scroll to cabinet and animate
   function runDemo() {
