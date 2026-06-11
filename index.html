@@ -85,6 +85,51 @@
 
   /* ---------- Hero ---------- */
   .hero { padding: 76px 0 60px; position: relative; }
+  .hero .wrap { position: relative; z-index: 1; }
+
+  /* Floating document graphic */
+  .hero-art {
+    position: absolute; top: 96px; right: max(24px, calc(50% - 575px));
+    width: 360px; z-index: 0; pointer-events: none;
+  }
+  @media (max-width: 1180px){ .hero-art { display: none; } }
+  .hero-art .doc-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow-lg); padding: 22px; transform: rotate(3deg);
+    animation: floaty 6s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100%{ transform: rotate(3deg) translateY(0); } 50%{ transform: rotate(3deg) translateY(-12px); } }
+  .doc-card .dc-top { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+  .doc-card .dc-ic { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--blue-500), var(--blue-800)); display: grid; place-items: center; }
+  .doc-card .dc-ic svg { width: 18px; height: 18px; color: #fff; }
+  .doc-card .dc-name { font-size: 13.5px; font-weight: 700; }
+  .doc-card .dc-sub { font-size: 11px; color: var(--muted); }
+  .doc-field { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+  .doc-field .lbl { font-size: 11px; color: var(--muted); width: 56px; flex-shrink: 0; }
+  .doc-field .val { height: 11px; border-radius: 5px; background: var(--blue-100); flex: 1; position: relative; overflow: hidden; }
+  .doc-field .val::after { content:""; position:absolute; inset:0; width: 0; background: linear-gradient(90deg, var(--blue-400), var(--blue-600)); border-radius:5px; animation: fill 4s ease-in-out infinite; }
+  .doc-field:nth-child(2) .val::after { animation-delay: .2s; }
+  .doc-field:nth-child(3) .val::after { animation-delay: .6s; }
+  .doc-field:nth-child(4) .val::after { animation-delay: 1s; }
+  @keyframes fill { 0%{ width:0; } 40%,100%{ width: 100%; } }
+  .doc-field .chk { width: 17px; height: 17px; border-radius: 50%; background: #e3f6ec; display: grid; place-items: center; flex-shrink: 0; }
+  .doc-field .chk svg { width: 10px; height: 10px; color: #18a558; }
+  /* floating mini badges */
+  .art-badge {
+    position: absolute; background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow-md); padding: 10px 14px;
+    display: flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 600;
+    animation: floaty2 5s ease-in-out infinite;
+  }
+  @keyframes floaty2 { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-9px); } }
+  .art-badge svg { width: 16px; height: 16px; }
+  .art-badge.b-fns { top: -18px; left: -34px; color: var(--blue-700); }
+  .art-badge.b-fns svg { color: var(--blue-500); }
+  .art-badge.b-done { bottom: -20px; right: -22px; color: #18a558; animation-delay: 1.2s; }
+  .art-badge.b-done .rc { width: 22px; height: 22px; border-radius: 50%; background: #18a558; display: grid; place-items: center; }
+  .art-badge.b-done .rc svg { width: 13px; height: 13px; color: #fff; }
+  .art-badge.b-docx { top: 44%; right: -52px; color: var(--blue-700); animation-delay: .6s; }
+  .art-badge.b-docx svg { color: var(--blue-600); }
   .hero::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
     background:
@@ -93,16 +138,18 @@
       linear-gradient(180deg, var(--blue-50), #fff 70%);
   }
   .pill {
-    display: inline-flex; align-items: center; gap: 9px;
-    background: #fff; border: 1px solid var(--blue-300);
-    color: var(--blue-700); font-weight: 600; font-size: 13.5px;
-    padding: 7px 15px; border-radius: 999px; box-shadow: var(--shadow-sm);
-    margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+    border: 1px solid var(--blue-500);
+    color: #fff; font-weight: 700; font-size: clamp(14px, 1.7vw, 17px); letter-spacing: -.01em;
+    padding: 12px 22px; border-radius: 999px; box-shadow: 0 12px 28px rgba(28,100,196,.32);
+    margin-bottom: 26px;
   }
-  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500); box-shadow: 0 0 0 4px rgba(37,117,230,.16); }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.28); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 4px rgba(255,255,255,.28);} 50%{ box-shadow: 0 0 0 7px rgba(255,255,255,.12);} }
   .hero h1 {
     font-size: clamp(34px, 5.2vw, 58px); line-height: 1.07; letter-spacing: -.03em;
-    font-weight: 900; max-width: 920px; margin-bottom: 22px;
+    font-weight: 900; max-width: 680px; margin-bottom: 22px;
   }
   .hero h1 .grad {
     background: linear-gradient(120deg, var(--blue-600), var(--blue-400));
@@ -299,6 +346,21 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
+  <div class="hero-art">
+    <div class="doc-card">
+      <div class="dc-top">
+        <span class="dc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></span>
+        <div><div class="dc-name">Заявка_участника.docx</div><div class="dc-sub">заполняется автоматически…</div></div>
+      </div>
+      <div class="doc-field"><span class="lbl">Наимен.</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+      <div class="doc-field"><span class="lbl">ИНН / КПП</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+      <div class="doc-field"><span class="lbl">ОГРН</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+      <div class="doc-field"><span class="lbl">Адрес</span><span class="val"></span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+    </div>
+    <div class="art-badge b-fns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4"/></svg> Данные из ФНС</div>
+    <div class="art-badge b-docx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg> .docx / .pdf</div>
+    <div class="art-badge b-done"><span class="rc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Готово</div>
+  </div>
   <div class="wrap">
     <div class="pill"><span class="dot"></span> Первый в России сервис автозаполнения тендерных заявок</div>
     <h1>Вставьте ссылку на тендер — <span class="grad">получите готовый пакет заявки</span></h1>
@@ -319,7 +381,6 @@
     </div>
 
     <div class="trust">
-      <div class="chip"><b>1-й</b><span>сервис такого рода в РФ</span></div>
       <div class="chip"><b>~7 мин</b><span>вместо нескольких часов вручную</span></div>
       <div class="chip"><b>44 / 223-ФЗ</b><span>поддержка госзакупок</span></div>
       <div class="chip"><b>0</b><span>выдуманных данных в заявке</span></div>
