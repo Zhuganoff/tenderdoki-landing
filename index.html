@@ -218,6 +218,38 @@
   .doc-out svg { width: 24px; height: 24px; }
   .doc-out .t { font-size: 13.5px; font-weight: 600; } .doc-out .s { font-size: 11.5px; opacity: .82; }
 
+  /* ---------- Pricing ---------- */
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+  @media (max-width: 920px){ .price-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; } }
+  .plan {
+    background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 34px 30px;
+    box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: .25s ease; position: relative;
+  }
+  .plan:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--blue-300); }
+  .plan.popular {
+    border: 1.5px solid var(--blue-500); box-shadow: var(--shadow-lg);
+    background: linear-gradient(180deg, #fff, var(--blue-50));
+  }
+  .plan .tag-pop {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--blue-500), var(--blue-700)); color: #fff;
+    font-size: 12.5px; font-weight: 700; padding: 6px 16px; border-radius: 999px; box-shadow: 0 8px 18px rgba(37,117,230,.4);
+    white-space: nowrap;
+  }
+  .plan .pname { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+  .plan .pdesc { font-size: 14px; color: var(--muted); margin-bottom: 22px; min-height: 40px; }
+  .plan .pprice { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .plan .pprice b { font-size: 42px; letter-spacing: -.03em; font-weight: 800; color: var(--ink); }
+  .plan .pprice .cur { font-size: 22px; font-weight: 700; color: var(--ink); }
+  .plan .pprice .per { font-size: 14.5px; color: var(--muted); }
+  .plan .pquota { font-size: 14px; color: var(--blue-700); font-weight: 600; background: var(--blue-100); display: inline-block; padding: 5px 12px; border-radius: 8px; margin-bottom: 22px; align-self: flex-start; }
+  .plan .punit { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .plan ul { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; flex: 1; }
+  .plan ul li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: var(--ink); }
+  .plan ul li svg { width: 18px; height: 18px; color: var(--blue-500); flex-shrink: 0; margin-top: 2px; }
+  .plan .btn { width: 100%; }
+  .price-note { text-align: center; color: var(--muted); font-size: 14px; margin-top: 30px; }
+
   /* ---------- CTA ---------- */
   .cta { background: linear-gradient(135deg, var(--blue-600), var(--blue-900)); border-radius: 28px; padding: 64px 40px; text-align: center; color: #fff; position: relative; overflow: hidden; }
   .cta::after { content:""; position:absolute; inset:0; background: radial-gradient(600px 300px at 80% 0%, rgba(255,255,255,.16), transparent 60%); }
@@ -256,7 +288,7 @@
       <a href="#how">Как это работает</a>
       <a href="#why">Возможности</a>
       <a href="#cabinet">Личный кабинет</a>
-      <a href="#cta">Цены</a>
+      <a href="#pricing">Цены</a>
     </nav>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="#cabinet">Войти</a>
@@ -362,6 +394,11 @@
         <p>Поддержка форматов государственных и корпоративных закупок и площадок ЕИС.</p>
       </div>
       <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V7l8-4z"/><path d="M3 9h18"/></svg></div>
+        <h3>Юридический анализ заказчика и договора</h3>
+        <p>Проверяем заказчика и условия проекта договора: риски, спорные пункты, штрафы и обеспечение — чтобы вы видели подводные камни до подачи заявки.</p>
+      </div>
+      <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
         <h3>Готовые .docx и .pdf</h3>
         <p>На выходе — собранный пакет заявки в нужных форматах, готовый к подаче на площадке.</p>
@@ -421,8 +458,72 @@
   </div>
 </section>
 
+<!-- ============ PRICING ============ -->
+<section class="sec" id="pricing" style="background: var(--blue-50); border-block: 1px solid var(--line);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Тарифы</div>
+      <h2>Платите за заявки, а не за подписку «на всякий случай»</h2>
+      <p>Пакеты заявок на месяц. В каждый тариф входит автозаполнение документации и юридический анализ заказчика и договора.</p>
+    </div>
+
+    <div class="price-grid">
+      <!-- Старт -->
+      <div class="plan reveal">
+        <div class="pname">Старт</div>
+        <div class="pdesc">Для тех, кто участвует в закупках время от времени.</div>
+        <div class="pprice"><b>2150</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">5 заявок в месяц</div>
+        <div class="punit">≈ 430 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Автозаполнение пакета заявки по ссылке</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Юридический анализ заказчика и договора</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Реквизиты из ФНС по ИНН</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</li>
+        </ul>
+        <a class="btn btn-ghost" href="#hero">Выбрать «Старт»</a>
+      </div>
+
+      <!-- Бизнес (популярный) -->
+      <div class="plan popular reveal">
+        <div class="tag-pop">⭐ Популярный</div>
+        <div class="pname">Бизнес</div>
+        <div class="pdesc">Оптимально для регулярного участия в тендерах.</div>
+        <div class="pprice"><b>3600</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">10 заявок в месяц</div>
+        <div class="punit">≈ 360 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Старт»</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Юридический анализ заказчика и договора</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> История заявок и статусы по тендерам</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Приоритетная обработка</li>
+        </ul>
+        <a class="btn btn-primary" href="#hero">Выбрать «Бизнес»</a>
+      </div>
+
+      <!-- Про -->
+      <div class="plan reveal">
+        <div class="pname">Про</div>
+        <div class="pdesc">Для активных участников и тендерных отделов.</div>
+        <div class="pprice"><b>6000</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">25 заявок в месяц</div>
+        <div class="punit">≈ 240 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Бизнес»</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Расширенный юридический анализ договора</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Несколько организаций в одном кабинете</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Поддержка в приоритете</li>
+        </ul>
+        <a class="btn btn-ghost" href="#hero">Выбрать «Про»</a>
+      </div>
+    </div>
+
+    <p class="price-note">Неиспользованные заявки сгорают в конце месяца · Тарифы и цены — иллюстративные, демо-прототип</p>
+  </div>
+</section>
+
 <!-- ============ CTA ============ -->
-<section class="sec" id="cta" style="padding-top: 0;">
+<section class="sec" id="cta">
   <div class="wrap">
     <div class="cta reveal">
       <h2>Перестаньте заполнять тендерные формы вручную</h2>
