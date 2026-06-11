@@ -7,7 +7,7 @@
 <meta name="description" content="ТендерДоки — первый в России сервис, который сам скачивает документацию закупки, распознаёт анкеты и формы и заполняет их данными вашей организации. Вставьте ссылку на тендер — получите готовый пакет заявки." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --blue-900: #0a2540;
@@ -68,7 +68,7 @@
     border-bottom: 1px solid var(--line);
   }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-  .logo { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 21px; letter-spacing: -.02em; }
+  .logo { display: flex; align-items: center; gap: 11px; font-family: 'Unbounded', 'Inter', sans-serif; font-weight: 600; font-size: 19px; letter-spacing: -.01em; }
   .logo-mark {
     width: 38px; height: 38px; border-radius: 11px;
     background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
@@ -155,7 +155,9 @@
     background: linear-gradient(120deg, var(--blue-600), var(--blue-400));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .hero p.lead { font-size: clamp(17px, 2vw, 21px); color: var(--muted); max-width: 640px; margin-bottom: 36px; }
+  .hero p.lead { font-size: clamp(19px, 2.3vw, 24px); line-height: 1.55; color: var(--muted); max-width: 660px; margin-bottom: 36px; }
+  .hero p.lead b { color: var(--blue-700); font-weight: 700; }
+  .brand-word { font-family: 'Unbounded', 'Inter', sans-serif; font-weight: 600; }
 
   /* ---------- Link input (the core idea) ---------- */
   .linkbox {
@@ -411,7 +413,7 @@
   <div class="wrap">
     <div class="pill"><span class="dot"></span> Первый в России сервис автозаполнения тендерных заявок</div>
     <h1>Вставьте ссылку на тендер — <span class="grad">получите готовый пакет заявки</span></h1>
-    <p class="lead">ТендерДоки сам скачивает всю документацию закупки, находит анкеты и формы, которые нужно заполнить, и подставляет данные вашей организации. Без ручной работы с документами.</p>
+    <p class="lead">Одна ссылка — и <span class="brand-word" style="color: var(--blue-700);">ТендерДоки</span> сам скачает документацию закупки, найдёт все анкеты и формы, заполнит их данными вашей организации и <b>проведёт юридический анализ заказчика и проекта договора</b>. Вам останется только проверить и подать.</p>
 
     <div class="linkbox">
       <div class="field">
@@ -440,7 +442,7 @@
   <div class="wrap counter-inner">
     <div class="counter-live"><span class="ld"></span> В реальном времени</div>
     <div class="counter-num" id="counter" aria-live="polite">0</div>
-    <div class="counter-label">заявок уже заполнено через ТендерДоки</div>
+    <div class="counter-label">заявок уже заполнено через <span class="brand-word">ТендерДоки</span></div>
     <div class="counter-sub">+<span id="counterToday">0</span> за сегодня · счётчик растёт прямо сейчас</div>
   </div>
 </section>
@@ -487,8 +489,8 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Возможности</div>
-      <h2>Почему ТендерДоки</h2>
-      <p>Мы убираем самую муторную часть участия в закупках — ручное заполнение документов.</p>
+      <h2>Почему <span class="brand-word" style="color: var(--blue-600);">ТендерДоки</span></h2>
+      <p><b style="color: var(--ink);">Ноль ошибок и часы сэкономленного времени.</b> Опечатка в реквизитах или пропущенная форма — и заявку отклонят. ТендерДоки подставляет данные автоматически и всегда одинаково точно, а пакет заявки собирает за минуты — вместо нескольких часов ручной работы.</p>
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
