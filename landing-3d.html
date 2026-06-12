@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ТендерДоки — первая в России платформа автоматической подготовки тендерной документации</title>
+<meta name="description" content="ТендерДоки сам скачает документацию закупки, распознает анкеты и формы и заполнит их данными вашей организации. Вставьте ссылку на тендер — получите готовый пакет заявки." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Golos+Text:wght@700;800&family=Unbounded:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Токены (палитра лендинга ТендерДоки) ============ */
+  :root {
+    --ink: #0a2540;
+    --blue-800: #103a66;
+    --blue-700: #14508c;
+    --blue-600: #1c64c4;
+    --blue-500: #2575e6;
+    --blue-400: #4f93f0;
+    --blue-300: #8fbcf7;
+    --blue-100: #e3eefb;
+    --blue-50:  #f3f8ff;
+    --muted: #5a708a;
+    --line: #dce7f5;
+    --white: #fff;
+    --r-lg: 22px;
+    --r-md: 14px;
+    --sh-sm: 0 2px 10px rgba(16,58,102,.07);
+    --sh-md: 0 14px 40px rgba(16,58,102,.13);
+    --sh-lg: 0 36px 90px rgba(16,58,102,.22);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink); background:var(--white); line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a { text-decoration:none; color:inherit; }
+  h1,h2 { font-family:'Golos Text','Inter',sans-serif; font-weight:800; letter-spacing:-.02em; }
+  .wrap { width:100%; max-width:1180px; margin:0 auto; padding:0 24px; }
+  .eyebrow { font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--blue-600); margin-bottom:10px; }
+  /* фирменное написание бренда — Unbounded, всегда слитно */
+  .brand-word { font-family:'Unbounded','Golos Text',sans-serif; font-weight:500; font-size:.92em; letter-spacing:-.01em; }
+
+  /* ============ Кнопки ============ */
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    font-weight:600; font-size:16px; border-radius:13px; padding:14px 26px;
+    cursor:pointer; border:none; transition:transform .2s ease, box-shadow .2s ease, background .2s;
+    white-space:nowrap;
+  }
+  .btn-primary {
+    background:linear-gradient(135deg,var(--blue-500),var(--blue-700)); color:#fff;
+    box-shadow:0 10px 26px rgba(37,117,230,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 18px 38px rgba(37,117,230,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+  .btn-ghost { background:var(--blue-100); color:var(--blue-700); }
+  .btn-ghost:hover { background:var(--blue-300); color:var(--ink); }
+  .btn-white { background:#fff; color:var(--blue-700); box-shadow:0 10px 28px rgba(4,24,48,.35); }
+  .btn-white:hover { transform:translateY(-2px); }
+  :focus-visible { outline:3px solid var(--blue-400); outline-offset:2px; border-radius:8px; }
+
+  /* ============ Навигация (стекло) ============ */
+  header {
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,.88); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    transform:translateZ(0); /* свой слой композитинга — blur не перерисовывается на каждый кадр скролла */
+  }
+  .nav { display:flex; align-items:center; gap:28px; height:66px; }
+  .logo { display:flex; align-items:center; gap:10px; font-family:'Unbounded','Golos Text',sans-serif; font-size:16px; font-weight:500; letter-spacing:-.01em; }
+  .logo b { color:var(--blue-600); font-weight:600; }
+  .logo-mark {
+    width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--blue-500),var(--blue-700));
+    box-shadow:0 6px 14px rgba(37,117,230,.35);
+  }
+  .logo-mark svg { width:19px; height:19px; }
+  .nav-links { display:flex; gap:22px; margin-left:auto; font-size:15px; font-weight:500; color:var(--muted); }
+  .nav-links a:hover { color:var(--blue-600); }
+  .nav-cta { display:flex; gap:10px; }
+  .nav-cta .btn { padding:10px 18px; font-size:15px; }
+  @media (max-width:880px){ .nav-links{display:none;} }
+  @media (max-width:560px){ .nav-cta .btn-ghost{display:none;} }
+
+  /* ============ HERO ============ */
+  .hero {
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(900px 480px at 85% -10%, rgba(79,147,240,.16), transparent 60%),
+      radial-gradient(700px 420px at -10% 30%, rgba(37,117,230,.10), transparent 60%),
+      linear-gradient(180deg, var(--blue-50), #fff 78%);
+  }
+  /* лёгкая 3D-сетка пола в перспективе */
+  .hero::after {
+    content:""; position:absolute; inset:auto 0 0 0; height:280px; pointer-events:none;
+    background:
+      linear-gradient(180deg, transparent, rgba(227,238,251,.5)),
+      repeating-linear-gradient(90deg, rgba(28,100,196,.05) 0 1px, transparent 1px 64px),
+      repeating-linear-gradient(0deg, rgba(28,100,196,.05) 0 1px, transparent 1px 44px);
+    transform:perspective(700px) rotateX(58deg) scale(1.6);
+    transform-origin:bottom center; opacity:.7;
+    mask-image:linear-gradient(180deg, transparent, #000 45%);
+    -webkit-mask-image:linear-gradient(180deg, transparent, #000 45%);
+  }
+  /* WebGL-фон hero: летящие листы-документы (three.js) */
+  .hero3d { position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .hero3d canvas { display:block; }
+  .hero-grid {
+    position:relative; z-index:2;
+    display:grid; grid-template-columns:1.08fr .92fr; gap:48px; align-items:center;
+    padding:72px 0 96px;
+  }
+  @media (max-width:980px){ .hero-grid{grid-template-columns:1fr; padding:48px 0 64px;} }
+
+  .pill {
+    display:inline-flex; align-items:center; gap:9px; font-size:13.5px; font-weight:600;
+    color:var(--blue-700); background:#fff; border:1px solid var(--line);
+    padding:8px 16px; border-radius:999px; box-shadow:var(--sh-sm); margin-bottom:22px;
+  }
+  .pill .dot { width:8px; height:8px; border-radius:50%; background:var(--blue-500); box-shadow:0 0 0 4px rgba(37,117,230,.18); }
+  .hero h1 { font-size:clamp(30px,4.4vw,52px); line-height:1.12; }
+  .hero h1 .grad {
+    background:linear-gradient(100deg,var(--blue-500),var(--blue-700));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .lead { margin-top:18px; font-size:17px; color:var(--muted); max-width:560px; }
+  .lead .lead-strong { font-weight:600; color:var(--ink); display:block; margin-bottom:6px; }
+
+  .linkbox {
+    margin-top:26px; display:flex; gap:10px; background:#fff; padding:10px;
+    border:1px solid var(--line); border-radius:18px; box-shadow:var(--sh-md);
+    max-width:640px;
+  }
+  .linkbox .field { display:flex; align-items:center; gap:10px; flex:1; padding:0 8px 0 12px; color:var(--blue-400); min-width:0; }
+  .linkbox .field svg { width:19px; height:19px; flex:none; }
+  .linkbox input { border:none; outline:none; flex:1; font-size:15.5px; font-family:inherit; color:var(--ink); background:transparent; min-width:0; }
+  .linkbox input::placeholder { color:#9db3cc; }
+  @media (max-width:560px){ .linkbox{flex-direction:column;} .linkbox .field{padding:10px 8px 4px 12px;} }
+
+  .hint { display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:18px; font-size:13.5px; font-weight:500; color:var(--muted); }
+  .hint span { display:inline-flex; align-items:center; gap:7px; }
+  .hint svg { width:15px; height:15px; color:var(--blue-500); flex:none; }
+
+  .trust { display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+  .chip {
+    background:#fff; border:1px solid var(--line); border-radius:var(--r-md);
+    padding:12px 18px; box-shadow:var(--sh-sm);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .chip:hover { transform:translateY(-4px); box-shadow:var(--sh-md); }
+  .chip b { display:block; font-size:18px; color:var(--blue-700); }
+  .chip span { font-size:12.5px; color:var(--muted); }
+
+  /* ---------- 3D-сцена: бланк + парящие чипы ---------- */
+  .scene { perspective:1400px; position:relative; min-height:480px; display:grid; place-items:center; }
+  @media (max-width:980px){ .scene{min-height:430px; margin-top:8px;} }
+  .sheet3d {
+    position:relative; width:min(380px,88%);
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:30px 28px 26px;
+    transform-style:preserve-3d;
+    transform:rotateY(calc(-9deg + var(--ry,0deg))) rotateX(calc(5deg + var(--rx,0deg)));
+    transition:transform .15s ease-out;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.8) inset,
+      0 24px 50px rgba(16,58,102,.16),
+      0 60px 120px rgba(16,58,102,.18);
+    will-change:transform;
+  }
+  /* стопка листов сзади — глубина */
+  .sheet3d::before, .sheet3d::after {
+    content:""; position:absolute; inset:0; border-radius:16px; background:#fff;
+    border:1px solid var(--line); z-index:-1;
+  }
+  .sheet3d::before { transform:translateZ(-26px) translate(12px,10px); opacity:.75; }
+  .sheet3d::after  { transform:translateZ(-52px) translate(24px,20px); opacity:.45; }
+  /* шапка официального документа */
+  .doc-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .doc-code {
+    font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--blue-700); background:var(--blue-100); border-radius:6px; padding:3px 9px;
+  }
+  .doc-reg { font-size:10px; color:#9db3cc; font-variant-numeric:tabular-nums; }
+  .sheet-head {
+    font-family:'Golos Text',sans-serif; font-weight:800; font-size:17px; text-align:center;
+    text-transform:uppercase; letter-spacing:.07em;
+  }
+  .sheet-sub { font-size:11.5px; color:var(--muted); text-align:center; margin-top:2px; }
+  .doc-rule { border-top:2px solid var(--ink); border-bottom:1px solid var(--ink); height:4px; margin:12px 0 16px; opacity:.75; }
+
+  /* поля-инпуты: пустое → активное (печатается) → заполнено */
+  .typed-row { margin-bottom:11px; }
+  .t-lbl { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .t-box {
+    display:flex; align-items:center; gap:8px; min-height:33px;
+    border:1.5px solid var(--line); border-radius:8px; background:#fbfdff;
+    padding:5px 10px;
+    transition:border-color .25s, background .25s, box-shadow .25s;
+  }
+  .t-box.active { border-color:var(--blue-400); background:#fff; box-shadow:0 0 0 3px rgba(37,117,230,.13); }
+  .t-box.done { border-color:#b5e3cb; background:#f4fbf7; }
+  .t-val { font-size:13px; font-weight:600; color:var(--blue-800); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .t-val.typing::after { content:"▏"; color:var(--blue-500); animation:blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .t-src {
+    margin-left:auto; flex:none; font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--blue-700); background:var(--blue-100); border-radius:5px; padding:2px 7px;
+    opacity:0; transform:translateY(4px); transition:opacity .3s, transform .3s;
+  }
+  .t-ok { width:14px; height:14px; flex:none; color:#1e9e5a; opacity:0; transform:scale(.3); transition:opacity .3s, transform .35s cubic-bezier(.2,1.6,.4,1); }
+  .t-box.done .t-src, .t-box.done .t-ok { opacity:1; transform:none; }
+  .t-box.done .t-src { margin-left:auto; }
+
+  /* прогресс заполнения внизу бланка */
+  .sheet-foot { display:flex; align-items:center; gap:10px; margin-top:14px; }
+  .fill-progress { flex:1; height:4px; border-radius:99px; background:var(--blue-100); overflow:hidden; }
+  .fill-progress i { display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,var(--blue-400),var(--blue-600)); transition:width .4s ease; }
+  .fill-count { font-size:10.5px; font-weight:700; color:var(--muted); font-variant-numeric:tabular-nums; }
+
+  /* попап-ассистент над углом бланка */
+  .assist {
+    position:absolute; top:-26px; right:-30px; transform:translateZ(90px);
+    display:flex; align-items:center; gap:9px;
+    background:#fff; border:1px solid var(--line); border-radius:13px;
+    padding:9px 14px 9px 10px; box-shadow:var(--sh-md);
+    animation:float1 7s ease-in-out infinite;
+  }
+  .assist .logo-mark { width:28px; height:28px; border-radius:8px; flex:none; }
+  .assist .logo-mark svg { width:16px; height:16px; }
+  .assist-txt { display:flex; flex-direction:column; line-height:1.25; }
+  .assist-txt b { font-size:11px; font-weight:500; font-family:'Unbounded','Golos Text',sans-serif; }
+  .assist-txt span { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .assist.done .assist-txt span { color:#1e9e5a; font-weight:600; }
+  @keyframes float1 { 50% { transform:translateZ(90px) translateY(-8px); } }
+  @media (max-width:560px){ .assist{ right:-4px; top:-30px; } }
+  .stamp {
+    position:absolute; right:18px; bottom:44px; opacity:0;
+    transform:rotate(-9deg) translateZ(30px);
+    border:2.5px solid #1e9e5a; color:#1e9e5a; border-radius:9px;
+    font-weight:800; font-size:12.5px; line-height:1.25; text-align:center;
+    padding:7px 12px; text-transform:uppercase; letter-spacing:.06em;
+  }
+  /* печать «прилетает» сверху и припечатывается с отскоком */
+  .stamp.show { animation:stampIn .6s cubic-bezier(.25,.9,.3,1.15) forwards; }
+  @keyframes stampIn {
+    0%   { opacity:0; transform:rotate(-28deg) translateZ(220px) scale(2.8); }
+    55%  { opacity:1; transform:rotate(-6deg)  translateZ(30px)  scale(.92); }
+    75%  {            transform:rotate(-11deg) translateZ(30px)  scale(1.06); }
+    100% { opacity:1; transform:rotate(-9deg)  translateZ(30px)  scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) { .stamp.show { opacity:1; animation:none; } }
+  .sheet-note { margin-top:14px; text-align:center; font-size:11px; color:#9db3cc; }
+
+
+  /* ============ Лента-счётчик ============ */
+  .counter-band {
+    position:relative; overflow:hidden; color:#fff; text-align:center;
+    background:
+      radial-gradient(800px 320px at 20% 0%, rgba(79,147,240,.35), transparent 60%),
+      radial-gradient(700px 300px at 85% 100%, rgba(37,117,230,.3), transparent 60%),
+      linear-gradient(135deg,#0a2540,#103a66 55%,#14508c);
+    padding:54px 0 58px;
+  }
+  .counter-live { display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-300); }
+  .counter-live .ld { width:9px; height:9px; border-radius:50%; background:#3ddc84; box-shadow:0 0 0 0 rgba(61,220,132,.5); animation:pulse 1.8s infinite; }
+  @keyframes pulse { 70% { box-shadow:0 0 0 11px rgba(61,220,132,0); } 100% { box-shadow:0 0 0 0 rgba(61,220,132,0); } }
+  .counter-num {
+    font-family:'Golos Text',sans-serif; font-weight:800; font-variant-numeric:tabular-nums;
+    font-size:clamp(44px,7vw,76px); line-height:1.1; margin:8px 0 2px;
+    text-shadow:0 3px 0 rgba(4,24,48,.4), 0 16px 40px rgba(4,24,48,.5);
+  }
+  .counter-label { font-size:17px; color:#cfe0f5; }
+  .counter-sub { margin-top:6px; font-size:13.5px; color:var(--blue-300); }
+
+  /* ============ Секции ============ */
+  .sec { padding:84px 0; }
+  .sec-head { max-width:760px; margin:0 auto 46px; text-align:center; }
+  .sec-head h2 { font-size:clamp(25px,3.4vw,38px); line-height:1.18; }
+  .sec-head p { margin-top:12px; color:var(--muted); font-size:16.5px; }
+  /* лид блока «Почему ТендерДоки»: акцентная строка + спокойный разбор */
+  .why-lead { max-width:680px; margin:14px auto 0; font-size:16px; line-height:1.78; color:var(--muted); }
+  .why-accent {
+    display:block; font-family:'Golos Text','Inter',sans-serif; font-weight:800;
+    font-size:21px; line-height:1.3; letter-spacing:-.01em; margin-bottom:10px;
+    background:linear-gradient(100deg,var(--ink) 35%,var(--blue-600));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  /* карточки с 3D-наклоном на hover (общий класс) */
+  .card3d {
+    background:#fff; border:1px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:var(--sh-sm);
+    transform:perspective(900px) rotateX(var(--cx,0deg)) rotateY(var(--cy,0deg)) translateY(var(--lift,0));
+    transition:transform .18s ease-out, box-shadow .25s ease;
+    will-change:transform;
+  }
+  .card3d:hover { --lift:-7px; box-shadow:var(--sh-md); }
+
+  .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  @media (max-width:980px){ .steps{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .steps{grid-template-columns:1fr;} }
+  .step { padding:26px 22px; position:relative; }
+  .step .num { font-size:12px; font-weight:800; letter-spacing:.12em; color:var(--blue-500); margin-bottom:14px; }
+  .step .ic, .feat .ic {
+    width:46px; height:46px; border-radius:13px; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--blue-100),#fff);
+    border:1px solid var(--line); color:var(--blue-600); margin-bottom:14px;
+    box-shadow:inset 0 1px 0 #fff, var(--sh-sm);
+  }
+  .step .ic svg, .feat .ic svg { width:22px; height:22px; }
+  .step h3, .feat h3 { font-size:16.5px; font-weight:700; margin-bottom:6px; }
+  .step p, .feat p { font-size:14px; color:var(--muted); }
+
+  .feat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  @media (max-width:980px){ .feat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .feat-grid{grid-template-columns:1fr;} }
+  .feat { padding:24px 20px; }
+
+  /* ============ Окно кабинета (3D при скролле) ============ */
+  .cab-grid { display:grid; grid-template-columns:.95fr 1.05fr; gap:48px; align-items:center; }
+  @media (max-width:980px){ .cab-grid{grid-template-columns:1fr;} }
+  .cab-list { list-style:none; margin-top:18px; display:grid; gap:12px; }
+  .cab-list li { display:flex; gap:11px; font-size:15px; color:var(--ink); }
+  .tick { width:22px; height:22px; flex:none; border-radius:7px; background:var(--blue-100); color:var(--blue-600); display:grid; place-items:center; margin-top:1px; }
+  .tick svg { width:13px; height:13px; }
+  .win-wrap { perspective:1400px; }
+  .window {
+    background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden;
+    box-shadow:var(--sh-lg);
+    transform:rotateX(12deg) rotateY(-6deg) translateY(22px);
+    transform-style:preserve-3d; opacity:.45;
+    transition:transform 1s cubic-bezier(.2,.8,.2,1), opacity .8s ease;
+    will-change:transform, opacity; /* анимируется скраб-скроллом — держим на своём слое */
+  }
+  .window.straight { transform:rotateX(0) rotateY(0) translateY(0); opacity:1; }
+  .win-bar { display:flex; align-items:center; gap:7px; padding:11px 14px; background:var(--blue-50); border-bottom:1px solid var(--line); }
+  .win-bar i { width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .win-bar .url { margin-left:10px; font-size:12.5px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:7px; padding:3px 12px; }
+  .win-body { padding:20px 22px 22px; }
+  .win-head { font-weight:800; font-family:'Golos Text',sans-serif; font-size:17px; margin-bottom:12px; }
+  .win-paste { display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:11px; padding:10px 13px; font-size:13.5px; color:var(--muted); }
+  .win-paste svg { width:16px; height:16px; color:var(--blue-400); flex:none; }
+  .win-paste b { margin-left:auto; color:var(--blue-600); font-size:12.5px; }
+  .progress { margin-top:14px; display:grid; gap:10px; }
+  .prow { display:flex; gap:11px; align-items:flex-start; font-size:14px; font-weight:600; }
+  .prow .pi { width:24px; height:24px; flex:none; border-radius:8px; display:grid; place-items:center; }
+  .prow .pi svg { width:13px; height:13px; }
+  .prow .ps { font-size:12px; font-weight:500; color:var(--muted); }
+  .prow.done .pi { background:#e7f7ee; color:#1e9e5a; }
+  .prow.run .pi { background:var(--blue-100); color:var(--blue-600); animation:spin 2.4s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .prow.wait { opacity:.55; }
+  .prow.wait .pi { background:var(--blue-50); color:var(--muted); }
+  .doc-out { margin-top:16px; display:flex; gap:11px; align-items:center; border:1.5px dashed var(--blue-300); background:var(--blue-50); border-radius:12px; padding:12px 14px; }
+  .doc-out svg { width:26px; height:26px; color:var(--blue-600); flex:none; }
+  .doc-out .t { font-size:14px; font-weight:700; }
+  .doc-out .s { font-size:12px; color:var(--muted); }
+
+  /* ============ Тарифы ============ */
+  .price-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch; }
+  @media (max-width:980px){ .price-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;} }
+  .plan { padding:28px 26px; display:flex; flex-direction:column; position:relative; }
+  .plan.popular {
+    border:1.5px solid var(--blue-400);
+    box-shadow:0 18px 50px rgba(37,117,230,.18);
+    background:linear-gradient(180deg,#fff, var(--blue-50));
+  }
+  .tag-pop {
+    position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    background:linear-gradient(135deg,var(--blue-500),var(--blue-700)); color:#fff;
+    font-size:12px; font-weight:700; border-radius:999px; padding:5px 14px;
+    box-shadow:0 6px 16px rgba(37,117,230,.4); white-space:nowrap;
+  }
+  .pname { font-family:'Golos Text',sans-serif; font-weight:800; font-size:19px; }
+  .pdesc { font-size:13.5px; color:var(--muted); margin-top:3px; min-height:38px; }
+  .pprice { margin-top:12px; }
+  .pprice b { font-family:'Golos Text',sans-serif; font-size:38px; font-weight:800; }
+  .pprice .cur { font-size:21px; font-weight:700; margin-left:3px; }
+  .pprice .per { font-size:13.5px; color:var(--muted); margin-left:6px; }
+  .pquota { margin-top:5px; font-size:14.5px; font-weight:700; color:var(--blue-700); }
+  .punit { font-size:12.5px; color:var(--muted); }
+  .plan ul { list-style:none; margin:16px 0 22px; display:grid; gap:9px; }
+  .plan li { display:flex; gap:9px; font-size:13.5px; color:var(--ink); }
+  .plan li svg { width:15px; height:15px; color:var(--blue-500); flex:none; margin-top:3px; }
+  .plan .btn { margin-top:auto; width:100%; }
+  .price-note { text-align:center; margin-top:26px; font-size:13.5px; color:var(--muted); }
+
+  /* ============ CTA ============ */
+  .cta {
+    position:relative; overflow:hidden; text-align:center; color:#fff;
+    border-radius:26px; padding:56px 28px;
+    background:
+      radial-gradient(640px 280px at 15% 10%, rgba(79,147,240,.4), transparent 60%),
+      radial-gradient(560px 260px at 90% 90%, rgba(37,117,230,.35), transparent 60%),
+      linear-gradient(135deg,#0a2540,#14508c);
+    box-shadow:var(--sh-lg);
+  }
+  .cta h2 { font-size:clamp(24px,3.2vw,34px); }
+  .cta p { margin:12px auto 24px; color:#cfe0f5; max-width:620px; }
+  .cta .free { margin-top:16px; font-size:15px; color:#cfe0f5; font-weight:600; }
+
+  /* ============ Футер ============ */
+  footer { border-top:1px solid var(--line); background:var(--blue-50); padding:34px 0; }
+  .foot { display:flex; flex-wrap:wrap; gap:14px 28px; align-items:center; justify-content:space-between; font-size:14px; color:var(--muted); }
+  .foot .logo { font-size:17px; }
+
+  /* ============ Появление при скролле ============ */
+  .reveal { opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  /* когда скролл-анимации ведёт GSAP — CSS-скрытие отключается */
+  body.gsap-on .reveal { opacity:1; transform:none; transition:none; }
+
+  /* ============ Доступность: без motion ============ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation:none !important; transition:none !important; }
+    .reveal { opacity:1; transform:none; }
+    .window { transform:none; opacity:1; }
+    .sheet3d { transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/new">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6V3z" fill="#fff" opacity=".95"/><path d="M14 3v4h4" fill="none" stroke="#1c64c4" stroke-width="1.4"/><path d="M9 13l2 2 4-4" stroke="#1c64c4" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>Тендер<b>Доки</b></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how">Как это работает</a>
+      <a href="#why">Возможности</a>
+      <a href="#cabinet">Личный кабинет</a>
+      <a href="#pricing">Цены</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="/login">Войти</a>
+      <a class="btn btn-primary" href="/register">Попробовать</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero3d" id="hero3d"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="pill"><span class="dot"></span> Первая в России платформа автоматической подготовки тендерной документации</div>
+      <h1>Вставьте ссылку на тендер — <span class="grad">получите готовый пакет заявки</span></h1>
+      <p class="lead"><span class="lead-strong">Одна ссылка — и быстрое достижение цели без ущерба для качества и точности.</span><span class="brand-word" style="color:var(--blue-700);">ТендерДоки</span> сам скачает документацию закупки, найдёт все анкеты и формы, заполнит их данными вашей организации и <b>проведёт юридический анализ заказчика и проекта договора</b>. Вам останется только проверить и подать.</p>
+
+      <div class="linkbox">
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
+          <input id="tenderLink" type="text" placeholder="Вставьте ссылку на закупку (zakupki.gov.ru, ЭТП…)" />
+        </div>
+        <button class="btn btn-primary" onclick="runDemo()">Заполнить заявку →</button>
+      </div>
+
+      <div class="hint">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 44-ФЗ и 223-ФЗ</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Данные из ФНС подтягиваются автоматически</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Цена вашей заявки зашифрована и скрыта даже от нас</span>
+        <span style="color:var(--blue-700); font-weight:600;">🎁 Первая заявка при регистрации — бесплатно</span>
+      </div>
+
+      <div class="trust">
+        <div class="chip"><b>~7 мин</b><span>вместо нескольких часов вручную</span></div>
+        <div class="chip"><b>44 / 223-ФЗ</b><span>поддержка госзакупок</span></div>
+      </div>
+    </div>
+
+    <!-- 3D-сцена: бланк, который заполняется сам -->
+    <div class="scene" id="scene">
+      <div class="sheet3d" id="sheet">
+        <!-- шапка официального документа -->
+        <div class="doc-top">
+          <span class="doc-code">Форма 2</span>
+          <span class="doc-reg">закупка № 0173200001425000123</span>
+        </div>
+        <div class="sheet-head">Заявка на участие</div>
+        <div class="sheet-sub">Анкета участника закупки · 44-ФЗ</div>
+        <div class="doc-rule"></div>
+
+        <div class="typed-row">
+          <div class="t-lbl">Наименование организации</div>
+          <div class="t-box" id="box0"><span class="t-val" id="tf0"></span><span class="t-src">ФНС</span><svg class="t-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+        <div class="typed-row">
+          <div class="t-lbl">ИНН</div>
+          <div class="t-box" id="box1"><span class="t-val" id="tf1"></span><span class="t-src">ФНС</span><svg class="t-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+        <div class="typed-row">
+          <div class="t-lbl">ОГРН</div>
+          <div class="t-box" id="box2"><span class="t-val" id="tf2"></span><span class="t-src">ФНС</span><svg class="t-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+        <div class="typed-row">
+          <div class="t-lbl">Юридический адрес</div>
+          <div class="t-box" id="box3"><span class="t-val" id="tf3"></span><span class="t-src">ФНС</span><svg class="t-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+        <div class="typed-row">
+          <div class="t-lbl">Согласие с условиями закупки</div>
+          <div class="t-box" id="box4"><span class="t-val" id="tf4"></span><span class="t-src">профиль</span><svg class="t-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        </div>
+
+        <!-- прогресс заполнения -->
+        <div class="sheet-foot">
+          <div class="fill-progress"><i id="fillbar"></i></div>
+          <span class="fill-count" id="fillcount">0 / 5</span>
+        </div>
+
+        <div class="stamp" id="stamp">Заполнено<br>автоматически</div>
+
+        <!-- попап-ассистент поверх угла бланка (как у расширений-автозаполнятелей) -->
+        <div class="assist" id="assist">
+          <span class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6V3z" fill="#fff" opacity=".95"/><path d="M14 3v4h4" fill="none" stroke="#1c64c4" stroke-width="1.4"/><path d="M9 13l2 2 4-4" stroke="#1c64c4" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div class="assist-txt"><b>Тендер<span style="color:var(--blue-600)">Доки</span></b><span id="assistText">Заполняем из профиля…</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Счётчик ============ -->
+<section class="counter-band">
+  <div class="wrap">
+    <div class="counter-live"><span class="ld"></span> В реальном времени</div>
+    <div class="counter-num" id="counter" aria-live="polite">0</div>
+    <div class="counter-label">заявок уже заполнено через <span class="brand-word">ТендерДоки</span></div>
+    <div class="counter-sub">+<span id="counterToday">0</span> за сегодня · счётчик растёт прямо сейчас</div>
+  </div>
+</section>
+
+<!-- ============ Как это работает ============ -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Как это работает</div>
+      <h2>От ссылки до готовой заявки — четыре шага</h2>
+      <p>Вы даёте ссылку на тендер. Всё остальное делает ТендерДоки.</p>
+    </div>
+    <div class="steps">
+      <div class="step card3d reveal">
+        <div class="num">ШАГ 01</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg></div>
+        <h3>Вставляете ссылку</h3>
+        <p>Скопируйте адрес закупки из ЕИС или с электронной площадки в личном кабинете.</p>
+      </div>
+      <div class="step card3d reveal">
+        <div class="num">ШАГ 02</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
+        <h3>Скачиваем документацию</h3>
+        <p>Система сама забирает весь пакет файлов закупки — архивы, DOCX, PDF.</p>
+      </div>
+      <div class="step card3d reveal">
+        <div class="num">ШАГ 03</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg></div>
+        <h3>Распознаём формы</h3>
+        <p>Находим анкеты, заявки и формы, которые требуется заполнить, и их поля.</p>
+      </div>
+      <div class="step card3d reveal">
+        <div class="num">ШАГ 04</div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></div>
+        <h3>Получаете готовый пакет</h3>
+        <p>Формы заполнены данными вашей организации. Скачивайте .docx / .pdf и подавайте.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Возможности ============ -->
+<section class="sec" id="why" style="background:var(--blue-50); border-block:1px solid var(--line);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Возможности</div>
+      <h2>Почему <span class="brand-word" style="color:var(--blue-600);">ТендерДоки</span></h2>
+      <p class="why-lead"><span class="why-accent">Ноль ошибок — и часы сэкономленного времени.</span>Опечатка в реквизитах или пропущенная форма — и заявку отклонят. <span class="brand-word" style="color:var(--blue-700);">ТендерДоки</span> подставляет данные автоматически и всегда одинаково точно, а пакет заявки собирает за минуты.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h3>Часы работы → минуты</h3>
+        <p>То, на что специалист тратит полдня, ТендерДоки делает за считанные минуты после вставки ссылки.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Никаких выдуманных данных</h3>
+        <p>Реквизиты берутся из вашего профиля и из ФНС. Система не придумывает данные — меньше отклонённых заявок.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 17l8 4 8-4"/></svg></div>
+        <h3>Реквизиты из ФНС автоматически</h3>
+        <p>Указали ИНН — и наименование, адрес, КПП, ОГРН подтянутся сами. Заполняете профиль один раз.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V7l8-4z"/><path d="M3 9h18"/></svg></div>
+        <h3>Юридический анализ заказчика и договора</h3>
+        <p>Проверяем заказчика и условия договора: риски, спорные пункты, штрафы и обеспечение — до подачи заявки.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <h3>44-ФЗ и 223-ФЗ</h3>
+        <p>Поддержка форматов государственных и корпоративных закупок и площадок ЕИС.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <h3>Готовые .docx и .pdf</h3>
+        <p>На выходе — собранный пакет заявки в нужных форматах, готовый к подаче на площадке.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <h3>Данные под защитой (152-ФЗ)</h3>
+        <p>Персональные данные обрабатываются на серверах в России в соответствии с законодательством.</p>
+      </div>
+      <div class="feat card3d reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></div>
+        <h3>Ваша цена скрыта даже от нас</h3>
+        <p>Ценовое предложение хранится в зашифрованном виде — конфиденциальность вашей ставки гарантирована.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Личный кабинет ============ -->
+<section class="sec" id="cabinet">
+  <div class="wrap cab-grid">
+    <div class="reveal">
+      <div class="eyebrow">Личный кабинет</div>
+      <h2 style="font-size:clamp(24px,3.2vw,34px);">Один экран. Одна ссылка. Готовая заявка.</h2>
+      <p style="margin-top:12px; color:var(--muted);">В личном кабинете вы просто вставляете ссылку на тендер — а сервис в реальном времени показывает, как скачивает документы, распознаёт формы и заполняет их.</p>
+      <ul class="cab-list">
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Профиль организации заполняется один раз и используется во всех заявках</li>
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> История поданных заявок и статусы по каждому тендеру</li>
+        <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Видно, какие поля заполнены автоматически, а какие требуют проверки</li>
+      </ul>
+    </div>
+    <div class="win-wrap reveal">
+      <div class="window" id="window">
+        <div class="win-bar">
+          <i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+          <span class="url">app.tenderdoki.ru/кабинет</span>
+        </div>
+        <div class="win-body">
+          <div class="win-head">Новая заявка</div>
+          <div class="win-paste">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
+            <span>zakupki.gov.ru/.../0173200001425000…</span>
+            <b>Старт</b>
+          </div>
+          <div class="progress">
+            <div class="prow done"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="pt">Документация закупки скачана<div class="ps">14 файлов · 28 МБ</div></span></div>
+            <div class="prow done"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="pt">Реквизиты организации из ФНС<div class="ps">ИНН · КПП · ОГРН · адрес</div></span></div>
+            <div class="prow run"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/></svg></span><span class="pt">Распознаём формы и анкеты<div class="ps">Найдено 3 формы для заполнения…</div></span></div>
+            <div class="prow wait"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="pt">Заполнение данными организации<div class="ps">Ожидает</div></span></div>
+          </div>
+          <div class="doc-out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>
+            <div><div class="t">Заявка_участника.docx</div><div class="s">Будет готова после заполнения</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Тарифы ============ -->
+<section class="sec" id="pricing" style="background:var(--blue-50); border-block:1px solid var(--line);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Тарифы</div>
+      <h2>Платите за заявки, а не за подписку «на всякий случай»</h2>
+      <p>Пакеты заявок на месяц. В каждый тариф входит автозаполнение документации и юридический анализ заказчика и договора.</p>
+    </div>
+    <div class="price-grid">
+      <div class="plan card3d reveal">
+        <div class="pname">Старт</div>
+        <div class="pdesc">Для тех, кто участвует в закупках время от времени.</div>
+        <div class="pprice"><b>2150</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">5 заявок в месяц</div>
+        <div class="punit">≈ 430 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Автозаполнение пакета заявки по ссылке</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Юридический анализ заказчика и договора</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Реквизиты из ФНС по ИНН</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</li>
+        </ul>
+        <a class="btn btn-ghost" href="/register">Выбрать «Старт»</a>
+      </div>
+      <div class="plan popular card3d reveal">
+        <div class="tag-pop">⭐ Популярный</div>
+        <div class="pname">Бизнес</div>
+        <div class="pdesc">Оптимально для регулярного участия в тендерах.</div>
+        <div class="pprice"><b>3600</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">10 заявок в месяц</div>
+        <div class="punit">≈ 360 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Старт»</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> История заявок и статусы по тендерам</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Приоритетная обработка</li>
+        </ul>
+        <a class="btn btn-primary" href="/register">Выбрать «Бизнес»</a>
+      </div>
+      <div class="plan card3d reveal">
+        <div class="pname">Про</div>
+        <div class="pdesc">Для активных участников и тендерных отделов.</div>
+        <div class="pprice"><b>6000</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">25 заявок в месяц</div>
+        <div class="punit">≈ 240 ₽ за одну заявку</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Бизнес»</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Расширенный юридический анализ договора</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Несколько организаций в одном кабинете</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Поддержка в приоритете</li>
+        </ul>
+        <a class="btn btn-ghost" href="/register">Выбрать «Про»</a>
+      </div>
+    </div>
+    <p class="price-note"><b style="color:var(--blue-700);">🎁 Первая заявка при регистрации — бесплатно</b> · Неиспользованные заявки сгорают в конце месяца · Тарифы и цены — иллюстративные, демо-прототип</p>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="sec" id="cta">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Перестаньте заполнять тендерные формы вручную</h2>
+      <p>Попробуйте ТендерДоки на своей следующей закупке. Вставьте ссылку — и посмотрите, как заявка собирается сама.</p>
+      <a class="btn btn-white" href="#hero">Вставить ссылку на тендер →</a>
+      <div class="free">🎁 При регистрации первая заявка — бесплатно</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a class="logo" href="/new">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6V3z" fill="#fff" opacity=".95"/><path d="M14 3v4h4" fill="none" stroke="#1c64c4" stroke-width="1.4"/><path d="M9 13l2 2 4-4" stroke="#1c64c4" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>Тендер<b>Доки</b></span>
+    </a>
+    <span>Первая в России платформа автоматической подготовки тендерной документации · демо-прототип</span>
+    <span>© 2026 ТендерДоки</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+  // ---------- prefers-reduced-motion: общий флаг ----------
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- WebGL-сцена: листы-документы плывут в глубине hero ----------
+  (function initHero3D() {
+    if (REDUCED || innerWidth < 880 || !window.THREE) return;
+    const host = document.getElementById('hero3d');
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(55, host.clientWidth / host.clientHeight, .1, 100);
+    cam.position.z = 14;
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(host.clientWidth, host.clientHeight);
+    // 1.25 вместо retina-2: на larger-канвасе именно растеризация ест кадры
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
+    host.appendChild(renderer.domElement);
+
+    const geo = new THREE.PlaneGeometry(1, 1.35);
+    const edgeGeo = new THREE.EdgesGeometry(geo);
+    const sheets = [];
+    for (let i = 0; i < 38; i++) {
+      const depth = Math.random() * 18 + 2;
+      const op = Math.max(.10, .55 - depth * .025);
+      const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: op, side: THREE.DoubleSide });
+      const p = new THREE.Mesh(geo, mat);
+      p.position.set((Math.random() - .5) * 34, (Math.random() - .5) * 18, -depth);
+      p.rotation.set(Math.random() * .6 - .3, Math.random() * .9 - .45, Math.random() * .5 - .25);
+      p.userData = { vy: .006 + Math.random() * .012, vr: (Math.random() - .5) * .006 };
+      // синяя кромка — чтобы листы читались на светлом фоне
+      p.add(new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: 0x4f93f0, transparent: true, opacity: Math.min(1, op + .25) })));
+      scene.add(p); sheets.push(p);
+    }
+
+    let mx = 0, my = 0;
+    addEventListener('mousemove', (e) => {
+      mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5;
+    }, { passive: true });
+
+    // рендерим ТОЛЬКО пока hero в зоне видимости и вкладка активна —
+    // при прокрутке ниже WebGL полностью замирает и не отъедает кадры
+    let heroVisible = true;
+    new IntersectionObserver(([en]) => { heroVisible = en.isIntersecting; }, { threshold: 0 })
+      .observe(host);
+
+    (function anim() {
+      requestAnimationFrame(anim);
+      if (!heroVisible || document.hidden) return;
+      for (const p of sheets) {
+        p.position.y += p.userData.vy;
+        p.rotation.y += p.userData.vr;
+        if (p.position.y > 10) p.position.y = -10;
+      }
+      cam.position.x += (mx * 3 - cam.position.x) * .05;   // параллакс за курсором
+      cam.position.y += (-my * 2 - cam.position.y) * .05;
+      cam.lookAt(0, 0, -6);
+      renderer.render(scene, cam);
+    })();
+
+    addEventListener('resize', () => {
+      cam.aspect = host.clientWidth / host.clientHeight;
+      cam.updateProjectionMatrix();
+      renderer.setSize(host.clientWidth, host.clientHeight);
+    });
+  })();
+
+  // ---------- 3D-тилт бланка за курсором ----------
+  const scene = document.getElementById('scene');
+  const sheet = document.getElementById('sheet');
+  if (!REDUCED && scene && matchMedia('(pointer:fine)').matches) {
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+    const loop = () => {
+      cx += (tx - cx) * .12; cy += (ty - cy) * .12;
+      sheet.style.setProperty('--rx', cy.toFixed(2) + 'deg');
+      sheet.style.setProperty('--ry', cx.toFixed(2) + 'deg');
+      if (Math.abs(tx-cx) > .05 || Math.abs(ty-cy) > .05) raf = requestAnimationFrame(loop);
+      else raf = null;
+    };
+    scene.addEventListener('mousemove', (e) => {
+      const r = scene.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - .5) * 22;   // ±11°
+      ty = -((e.clientY - r.top) / r.height - .5) * 16;  // ±8°
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
+    scene.addEventListener('mouseleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
+  }
+
+  // ---------- лёгкий 3D-наклон карточек ----------
+  if (!REDUCED && matchMedia('(pointer:fine)').matches) {
+    document.querySelectorAll('.card3d').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5;
+        const y = (e.clientY - r.top) / r.height - .5;
+        card.style.setProperty('--cy', (x * 4).toFixed(2) + 'deg');
+        card.style.setProperty('--cx', (-y * 4).toFixed(2) + 'deg');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--cx', '0deg');
+        card.style.setProperty('--cy', '0deg');
+      });
+    });
+  }
+
+  // ---------- печать бланка ----------
+  // Реальные реквизиты компании пользователя — как в исходном лендинге.
+  const FIELDS = [
+    'ООО «Компания Нефтересурс»',
+    '5501260168',
+    '1145543037463',
+    '644103, г. Омск, ул. Транссибирская, д. 6',
+    'Подтверждаем ✓',
+  ];
+  let typingTimer = null;
+  function typeSheet() {
+    if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+    const stamp = document.getElementById('stamp');
+    const assist = document.getElementById('assist');
+    const assistText = document.getElementById('assistText');
+    const bar = document.getElementById('fillbar');
+    const count = document.getElementById('fillcount');
+    const els = FIELDS.map((_, i) => document.getElementById('tf' + i));
+    const boxes = FIELDS.map((_, i) => document.getElementById('box' + i));
+
+    stamp.classList.remove('show');
+    assist.classList.remove('done');
+    assistText.textContent = 'Заполняем из профиля…';
+    bar.style.width = '0%'; count.textContent = '0 / ' + FIELDS.length;
+    els.forEach((el) => { el.textContent = ''; el.classList.remove('typing'); });
+    boxes.forEach((b) => b.classList.remove('active', 'done'));
+
+    const finish = () => {
+      stamp.classList.add('show');
+      assist.classList.add('done');
+      assistText.textContent = 'Готово · ' + FIELDS.length + ' полей из профиля';
+    };
+    if (REDUCED) { // без анимации — сразу заполнено
+      els.forEach((el, i) => { el.textContent = FIELDS[i]; });
+      boxes.forEach((b) => b.classList.add('done'));
+      bar.style.width = '100%'; count.textContent = FIELDS.length + ' / ' + FIELDS.length;
+      finish();
+      return;
+    }
+    let f = 0, ch = 0;
+    const tick = () => {
+      if (f >= FIELDS.length) {
+        // печать «прилетает» после заполнения; через паузу демо повторяется
+        finish();
+        typingTimer = setTimeout(typeSheet, 6500);
+        return;
+      }
+      const el = els[f], box = boxes[f];
+      if (ch === 0) box.classList.add('active');
+      el.classList.add('typing');
+      el.textContent = FIELDS[f].slice(0, ++ch);
+      if (ch >= FIELDS[f].length) {
+        el.classList.remove('typing');
+        box.classList.remove('active');
+        box.classList.add('done');           // галочка + бейдж источника
+        bar.style.width = ((f + 1) / FIELDS.length * 100) + '%';
+        count.textContent = (f + 1) + ' / ' + FIELDS.length;
+        f++; ch = 0;
+        typingTimer = setTimeout(tick, 300);
+      } else {
+        typingTimer = setTimeout(tick, 24 + Math.random() * 38);
+      }
+    };
+    typingTimer = setTimeout(tick, 600);
+  }
+  typeSheet();
+
+  // демо по кнопке: перезапуск печати (значение инпута не используется — это витрина)
+  function runDemo() {
+    typeSheet();
+    document.getElementById('sheet').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  // ---------- счётчик заявок ----------
+  const BASE = 2464728, EPOCH = Date.UTC(2026, 5, 10); // рост ~1 заявка/40с от опорной даты
+  const counterEl = document.getElementById('counter');
+  const todayEl = document.getElementById('counterToday');
+  const fmt = (n) => n.toLocaleString('ru-RU');
+  function counterNow() { return BASE + Math.floor((Date.now() - EPOCH) / 40000); }
+  function sinceMidnight() { const d = new Date(); return Math.floor((d - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 40000); }
+  function drawCounter() { counterEl.textContent = fmt(counterNow()); todayEl.textContent = fmt(sinceMidnight()); }
+  drawCounter();
+  if (!REDUCED) setInterval(drawCounter, 4000);
+
+  // ---------- скролл-анимации: GSAP ScrollTrigger, фолбэк — IntersectionObserver ----------
+  if (!REDUCED && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.body.classList.add('gsap-on');
+
+    // вход hero: текст и сцена
+    gsap.from('.hero-grid > div:first-child > *', { y: 34, opacity: 0, duration: .7, stagger: .08, ease: 'power2.out' });
+    gsap.from('.scene', { opacity: 0, scale: .9, y: 40, duration: .9, delay: .25, ease: 'power2.out' });
+
+    // заголовки секций — мягкий подъём, старт у нижней кромки экрана
+    document.querySelectorAll('.sec-head').forEach((el) => {
+      gsap.from(el, { y: 32, autoAlpha: 0, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
+    });
+    // карточки: ScrollTrigger.batch — каждая стартует при входе в кадр,
+    // а не вся сетка разом; мягкий ease и старт раньше = нет резкого «выскока»
+    const CARDS = '.step, .feat, .plan';
+    gsap.set(CARDS, { autoAlpha: 0, y: 44, rotateX: 16, transformPerspective: 900, transformOrigin: '50% 100%' });
+    ScrollTrigger.batch(CARDS, {
+      start: 'top 92%',
+      once: true,
+      onEnter: (batch) => gsap.to(batch, {
+        autoAlpha: 1, y: 0, rotateX: 0,
+        duration: 1.05, ease: 'power3.out', stagger: .12, overwrite: true,
+      }),
+    });
+    // окно кабинета: выпрямляется по мере скролла (scrub)
+    document.getElementById('window').classList.add('straight'); // CSS-наклон отдаём GSAP
+    gsap.fromTo('#window',
+      { rotateX: 34, rotateY: -10, y: 70, opacity: .25, transformPerspective: 1400 },
+      { rotateX: 0, rotateY: 0, y: 0, opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: '#window', start: 'top 95%', end: 'top 42%', scrub: .4 } });
+    gsap.from('.cab-grid > div:first-child > *', {
+      x: -34, autoAlpha: 0, duration: .85, ease: 'power3.out', stagger: .1,
+      scrollTrigger: { trigger: '.cab-grid', start: 'top 85%' },
+    });
+    // лента счётчика: цифра «доезжает» до текущего значения
+    const cntObj = { v: counterNow() - 1800 };
+    gsap.to(cntObj, {
+      v: counterNow(), duration: 2, ease: 'power2.out',
+      onUpdate: () => { counterEl.textContent = fmt(Math.round(cntObj.v)); },
+      scrollTrigger: { trigger: '.counter-band', start: 'top 85%' },
+    });
+    // CTA
+    gsap.from('.cta', { scale: .96, autoAlpha: 0, y: 30, duration: .95, ease: 'power3.out', scrollTrigger: { trigger: '.cta', start: 'top 90%' } });
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add(en.target.id === 'window' ? 'straight' : 'in');
+        io.unobserve(en.target);
+      });
+    }, { threshold: .18 });
+    document.querySelectorAll('.reveal, #window').forEach((el) => io.observe(el));
+    if (REDUCED) {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
+      document.getElementById('window').classList.add('straight');
+    }
+  }
+</script>
+</body>
+</html>
