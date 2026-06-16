@@ -7,7 +7,7 @@
 <meta name="description" content="ТендерДоки — первый в России сервис, который сам скачивает документацию закупки, распознаёт анкеты и формы и заполняет их данными вашей организации. Вставьте ссылку на тендер — получите готовый пакет заявки." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@800&family=Golos+Text:wght@700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@800&family=Golos+Text:wght@700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
     --blue-900: #0a2540;
@@ -68,7 +68,8 @@
     border-bottom: 1px solid var(--line);
   }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-  .logo { display: flex; align-items: center; gap: 11px; font-family: 'Manrope', 'Inter', sans-serif; font-weight: 800; font-size: 21px; letter-spacing: -.02em; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: 'Unbounded', 'Manrope', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -.07em; }
+  .logo b { font-weight: 700; }
   .logo-mark {
     width: 38px; height: 38px; border-radius: 11px;
     background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
@@ -84,28 +85,167 @@
   @media (max-width: 900px){ .nav-links { display: none; } }
 
   /* ---------- Hero ---------- */
-  .hero { padding: 76px 0 60px; position: relative; }
+  .hero {
+    padding: clamp(64px, 9vw, 116px) 0 clamp(56px, 7vw, 88px);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
   .hero .wrap { position: relative; z-index: 1; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr); gap: clamp(28px, 3.8vw, 52px); align-items: center; }
+  .hero-left { text-align: left; min-width: 0; }
+  .hero-right {
+    display: flex;
+    justify-content: center;
+    perspective: 1500px;
+    min-width: 0;
+    transform: translateY(-26px);
+  }
+  @media (max-width: 960px){
+    .hero-grid { grid-template-columns: 1fr; gap: clamp(30px, 6vw, 42px); }
+    .hero-right { perspective: none; transform: none; }
+  }
+  .hero-enter {
+    animation: heroEnter .78s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .hero-enter:nth-child(2) { animation-delay: .08s; }
+  .hero-enter:nth-child(3) { animation-delay: .16s; }
+  .hero-enter:nth-child(4) { animation-delay: .24s; }
+  .hero-enter:nth-child(5) { animation-delay: .32s; }
+  .hero-art.hero-enter { animation-delay: .28s; }
+  @keyframes heroEnter {
+    from { opacity: 0; transform: translateY(18px); filter: blur(8px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* Premium background: маленькие полупрозрачные анкеты вращаются в 3D и не спорят с текстом */
+  .hero-forms-bg {
+    position: absolute;
+    inset: -12% -8% -10%;
+    z-index: 0;
+    pointer-events: none;
+    perspective: 1100px;
+    transform-style: preserve-3d;
+    opacity: .72;
+    --mx: 0px;
+    --my: 0px;
+  }
+  .bg-form {
+    position: absolute;
+    width: clamp(86px, 9vw, 132px);
+    height: clamp(116px, 12vw, 176px);
+    border-radius: 14px;
+    padding: 13px 12px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.74), rgba(255,255,255,.30)),
+      linear-gradient(135deg, rgba(79,147,240,.22), rgba(227,238,251,.18));
+    border: 1px solid rgba(143,188,247,.35);
+    box-shadow:
+      0 22px 52px rgba(16,58,102,.10),
+      inset 0 1px 0 rgba(255,255,255,.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transform-style: preserve-3d;
+    animation: formDrift var(--dur, 18s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: transform;
+  }
+  .bg-form::before {
+    content: "";
+    display: block;
+    height: 8px;
+    width: 54%;
+    border-radius: 999px;
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, rgba(37,117,230,.58), rgba(143,188,247,.32));
+  }
+  .bg-form i,
+  .bg-form b,
+  .bg-form span {
+    display: block;
+    height: 7px;
+    border-radius: 999px;
+    margin-bottom: 11px;
+    background: rgba(20,80,140,.18);
+  }
+  .bg-form b { width: 86%; }
+  .bg-form i { width: 64%; }
+  .bg-form span { width: 74%; opacity: .72; }
+  .bg-form em {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    margin-top: 15px;
+    background:
+      linear-gradient(135deg, rgba(37,117,230,.34), rgba(79,147,240,.14));
+    box-shadow: inset 0 0 0 1px rgba(37,117,230,.18);
+  }
+  .bg-form.f1 { top: 12%; left: 5%; --dur: 19s; --delay: -3s; }
+  .bg-form.f2 { top: 8%; right: 12%; width: clamp(72px, 7vw, 104px); height: clamp(98px, 10vw, 138px); --dur: 22s; --delay: -9s; opacity: .55; }
+  .bg-form.f3 { right: 3%; bottom: 18%; --dur: 20s; --delay: -13s; opacity: .50; }
+  .bg-form.f4 { left: 42%; bottom: 4%; width: clamp(74px, 7vw, 112px); height: clamp(102px, 10vw, 146px); --dur: 24s; --delay: -6s; opacity: .46; }
+  .bg-form.f5 { left: 24%; top: 2%; width: clamp(64px, 6vw, 94px); height: clamp(88px, 9vw, 128px); --dur: 26s; --delay: -16s; opacity: .38; }
+  @keyframes formDrift {
+    0%, 100% {
+      transform:
+        translate3d(calc(var(--mx) * .35), calc(var(--my) * .35), -90px)
+        rotateX(56deg) rotateY(-22deg) rotateZ(-8deg);
+    }
+    35% {
+      transform:
+        translate3d(calc(18px + var(--mx) * .55), calc(-18px + var(--my) * .55), -30px)
+        rotateX(62deg) rotateY(18deg) rotateZ(8deg);
+    }
+    70% {
+      transform:
+        translate3d(calc(-14px + var(--mx) * .45), calc(16px + var(--my) * .45), -70px)
+        rotateX(50deg) rotateY(42deg) rotateZ(-14deg);
+    }
+  }
+  @media (max-width: 960px){
+    .hero-forms-bg { opacity: .42; inset: -6% -30% 12%; }
+    .bg-form.f1, .bg-form.f4, .bg-form.f5 { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bg-form { animation: none; }
+    .hero-forms-bg { opacity: .34; }
+    .hero-enter { animation: none; }
+  }
 
   /* Floating document graphic */
   .hero-art {
-    position: absolute; top: 96px; right: max(24px, calc(50% - 575px));
-    width: 360px; z-index: 0; pointer-events: none;
+    width: 100%; max-width: 490px; margin: 0;
+    position: relative; z-index: 1; text-align: left;
   }
-  @media (max-width: 1180px){ .hero-art { display: none; } }
   /* «Печатный бланк»: поля заполняются реальным текстом, посимвольно */
   .sheet {
-    background: #fff; border: 1px solid var(--line); border-radius: 10px;
-    box-shadow: var(--shadow-lg); padding: 32px 28px 22px; position: relative;
-    transform: rotate(2deg);
+    background: linear-gradient(180deg, #ffffff, #fbfdff);
+    border: 1px solid rgba(255,255,255,.85); border-radius: 18px;
+    box-shadow: 0 36px 72px -28px rgba(10,37,64,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(143,188,247,.20);
+    padding: 36px 30px 30px; position: relative;
+    transform: translateY(0) rotate(3deg) rotateY(-5deg) rotateX(1.5deg); transform-style: preserve-3d;
+    animation: floaty 7s ease-in-out infinite;
+    transition: transform .35s ease, box-shadow .35s ease;
   }
+  .sheet:hover {
+    box-shadow: 0 42px 86px -28px rgba(10,37,64,.40), 0 18px 38px -18px rgba(28,100,196,.28), 0 0 0 1px rgba(143,188,247,.30);
+  }
+  @keyframes floaty { 0%,100%{ transform: translateY(0) rotate(3deg) rotateY(-5deg) rotateX(1.5deg);} 50%{ transform: translateY(-12px) rotate(3deg) rotateY(-5deg) rotateX(1.5deg);} }
+  @media (max-width: 960px){ .sheet { transform: none; animation: none; border-radius: 16px; padding: 24px 20px 20px; box-shadow: 0 24px 48px -22px rgba(10,37,64,.3), 0 0 0 1px rgba(143,188,247,.2); } }
+  @media (prefers-reduced-motion: reduce){ .sheet { animation: none; } }
   .sheet::before { content:""; position:absolute; top:0; left:0; right:0; height:6px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, var(--blue-500), var(--blue-800)); }
   .sheet-clip { position:absolute; top:-13px; left:50%; transform: translateX(-50%); width: 86px; height: 22px; background: var(--blue-100); border: 1px solid var(--blue-300); border-radius: 7px; box-shadow: var(--shadow-sm); }
-  .sheet-head { text-align:center; font-weight: 800; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; color: var(--blue-900); }
-  .sheet-sub { text-align:center; font-size: 11px; color: var(--muted); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-  .typed-row { margin-bottom: 13px; }
-  .t-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 3px; }
-  .t-val { font-size: 12.5px; letter-spacing: -.01em; font-weight: 600; color: var(--blue-800); border-bottom: 1.5px solid var(--blue-100); min-height: 21px; padding-bottom: 2px; white-space: nowrap; overflow: hidden; }
+  .sheet-head { text-align:center; font-weight: 800; font-size: 16px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; color: var(--blue-900); }
+  .sheet-sub { text-align:center; font-size: 11.5px; color: var(--muted); margin-bottom: 23px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .typed-row { position: relative; margin-bottom: 13px; padding: 9px 40px 9px 13px; border-radius: 11px; transition: background .35s ease, box-shadow .35s ease; }
+  .typed-row.active { background: var(--blue-50); box-shadow: inset 0 0 0 1px var(--blue-100); }
+  .typed-row.done { background: rgba(24,165,88,.045); }
+  .t-check { position: absolute; right: 11px; top: 50%; transform: translateY(-50%) scale(.4); opacity: 0; transition: .4s cubic-bezier(.2,1.6,.4,1); color: #18a558; display: inline-flex; }
+  .typed-row.done .t-check { opacity: 1; transform: translateY(-50%) scale(1); }
+  .t-check svg { width: 17px; height: 17px; }
+  .t-lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+  .t-val { font-size: 13.2px; letter-spacing: -.01em; font-weight: 600; color: var(--blue-800); border-bottom: 1.5px solid var(--blue-100); min-height: 23px; padding-bottom: 3px; white-space: nowrap; overflow: hidden; }
   .t-val.active { border-bottom-color: var(--blue-400); }
   .t-val .caret { display:inline-block; width: 2px; height: 13px; background: var(--blue-600); margin-left: 2px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
@@ -119,54 +259,65 @@
   .stamp.show { opacity: .93; transform: rotate(-12deg) scale(1); }
   .sheet-note { margin-top: 14px; text-align: center; font-size: 10px; color: #9db3cc; }
   .hero::before {
-    content: ""; position: absolute; inset: 0; z-index: -1;
+    content: ""; position: absolute; inset: 0; z-index: 0;
     background:
       radial-gradient(900px 480px at 78% -8%, var(--blue-100), transparent 60%),
       radial-gradient(700px 420px at 6% 18%, #eaf3ff, transparent 55%),
       linear-gradient(180deg, var(--blue-50), #fff 70%);
   }
   .pill {
-    display: inline-flex; align-items: center; gap: 12px;
-    background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
-    border: 1px solid var(--blue-500);
-    color: #fff; font-weight: 700; font-size: clamp(14px, 1.7vw, 17px); letter-spacing: -.01em;
-    padding: 12px 22px; border-radius: 999px; box-shadow: 0 12px 28px rgba(28,100,196,.32);
-    margin-bottom: 26px;
+    display: inline-flex; align-items: center; gap: 11px;
+    background: var(--blue-100);
+    border: 1px solid var(--blue-300);
+    color: var(--blue-700); font-weight: 700; font-size: clamp(12.5px, 1.4vw, 14px); letter-spacing: .01em;
+    padding: 9px 18px; border-radius: 999px;
+    margin-bottom: clamp(22px, 3vw, 30px);
   }
+  .pill .dot { background: var(--blue-500) !important; box-shadow: 0 0 0 4px rgba(37,117,230,.18) !important; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.28); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 4px rgba(255,255,255,.28);} 50%{ box-shadow: 0 0 0 7px rgba(255,255,255,.12);} }
   .hero h1 {
-    font-family: 'Golos Text', 'Inter', sans-serif;
-    font-size: clamp(28px, 4.2vw, 46px); line-height: 1.12; letter-spacing: -.02em;
-    font-weight: 800; max-width: 640px; margin-bottom: 22px;
+    font-family: 'Unbounded', 'Golos Text', sans-serif;
+    font-size: clamp(25px, 4vw, 46px); line-height: 1.18; letter-spacing: -.02em;
+    font-weight: 700; color: var(--ink); max-width: 14ch; margin: 0 0 clamp(16px, 2vw, 22px);
+    text-wrap: balance;
   }
   .hero h1 .grad {
     background: linear-gradient(120deg, var(--blue-600), var(--blue-400));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .hero p.lead { font-size: clamp(16px, 1.95vw, 20px); line-height: 1.65; color: var(--muted); max-width: 640px; margin-bottom: 36px; text-align: justify; text-justify: inter-word; hyphens: auto; }
+  .hero p.lead {
+    font-size: clamp(16px, 1.85vw, 20px); line-height: 1.6; color: var(--muted);
+    max-width: 540px; margin: 0 0 clamp(26px, 3vw, 34px); text-wrap: pretty;
+  }
   .hero p.lead b { color: var(--blue-700); font-weight: 700; }
-  .brand-word { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 800; letter-spacing: -.02em; }
+  .brand-word { font-family: 'Unbounded', 'Manrope', sans-serif; font-weight: 700; letter-spacing: -.03em; }
 
   /* ---------- Link input (the core idea) ---------- */
   .linkbox {
     background: #fff; border-radius: 20px; padding: 14px;
     box-shadow: var(--shadow-lg); border: 1px solid var(--line);
-    max-width: 720px; display: flex; gap: 12px; align-items: center;
+    max-width: 620px; margin: 0; display: flex; gap: 10px; align-items: center;
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
   }
-  .linkbox .field { flex: 1; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 16px; }
+  .linkbox:hover {
+    transform: translateY(-2px);
+    border-color: var(--blue-300);
+    box-shadow: 0 34px 84px rgba(16,58,102,.18);
+  }
+  .linkbox .field { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 16px; }
   .linkbox .field svg { width: 22px; height: 22px; color: var(--blue-400); flex-shrink: 0; }
   .linkbox input {
     flex: 1; border: none; outline: none; font-size: 16px; font-family: inherit;
     color: var(--ink); padding: 18px 0; background: transparent;
   }
   .linkbox input::placeholder { color: #9db3cc; }
-  .linkbox .btn-primary { padding: 18px 30px; }
+  .linkbox .btn-primary { padding: 16px 18px; font-size: 14px; flex: 0 0 auto; }
   @media (max-width: 620px){
     .linkbox { flex-direction: column; align-items: stretch; }
     .linkbox .btn-primary { width: 100%; }
   }
-  .hint { margin-top: 16px; color: var(--muted); font-size: 14.5px; display: flex; gap: 18px; flex-wrap: wrap; }
+  .hint { margin-top: 18px; color: var(--muted); font-size: 14px; display: flex; gap: 16px 20px; flex-wrap: wrap; justify-content: flex-start; }
   .hint span { display: inline-flex; align-items: center; gap: 7px; }
   .hint svg { width: 16px; height: 16px; color: var(--blue-500); }
 
@@ -231,6 +382,14 @@
   .feat {
     border-radius: var(--radius); padding: 30px; border: 1px solid var(--line);
     background: linear-gradient(180deg, #fff, var(--blue-50));
+    box-shadow: var(--shadow-sm);
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease, background .28s ease;
+  }
+  .feat:hover {
+    transform: translateY(-5px);
+    border-color: var(--blue-300);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(180deg, #fff, #eef6ff);
   }
   .feat .ic { width: 48px; height: 48px; border-radius: 13px; background: var(--blue-600); display: grid; place-items: center; margin-bottom: 18px; box-shadow: 0 8px 18px rgba(28,100,196,.32); }
   .feat .ic svg { width: 24px; height: 24px; color: #fff; }
@@ -392,54 +551,57 @@
       <a href="#pricing">Цены</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="#cabinet">Войти</a>
-      <a class="btn btn-primary" href="#hero">Попробовать</a>
+      <a class="btn btn-ghost" href="/login">Войти</a>
+      <a class="btn btn-primary" href="/register">Попробовать</a>
     </div>
   </div>
 </header>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
-  <div class="hero-art">
-    <!-- печатный бланк: поля заполняются реальным текстом -->
-    <div class="sheet">
-      <div class="sheet-clip"></div>
-      <div class="sheet-head">Заявка на участие</div>
-      <div class="sheet-sub">Форма 2 · Анкета участника закупки</div>
-      <div class="typed-row"><div class="t-lbl">Наименование организации</div><div class="t-val" id="tf0"></div></div>
-      <div class="typed-row"><div class="t-lbl">ИНН</div><div class="t-val" id="tf1"></div></div>
-      <div class="typed-row"><div class="t-lbl">ОГРН</div><div class="t-val" id="tf2"></div></div>
-      <div class="typed-row"><div class="t-lbl">Юридический адрес</div><div class="t-val" id="tf3"></div></div>
-      <div class="typed-row"><div class="t-lbl">Согласие с условиями закупки</div><div class="t-val" id="tf4"></div></div>
-      <div class="stamp" id="stamp">Заполнено<br>автоматически</div>
-      <div class="sheet-note">пример автоматического заполнения формы</div>
-    </div>
+  <div class="hero-forms-bg" aria-hidden="true">
+    <div class="bg-form f1"><b></b><i></i><span></span><i></i><em></em></div>
+    <div class="bg-form f2"><b></b><span></span><i></i><span></span><em></em></div>
+    <div class="bg-form f3"><b></b><i></i><span></span><i></i><em></em></div>
+    <div class="bg-form f4"><b></b><span></span><i></i><span></span><em></em></div>
+    <div class="bg-form f5"><b></b><i></i><span></span><i></i><em></em></div>
   </div>
-  <div class="wrap">
-    <div class="pill"><span class="dot"></span> Первый в России сервис автозаполнения тендерных заявок</div>
-    <h1>Вставьте ссылку на тендер — <span class="grad">получите готовый пакет заявки</span></h1>
-    <p class="lead"><span style="font-weight: 600; color: var(--ink); display: block; margin-bottom: 6px;">Одна ссылка — и быстрое достижение цели без ущерба для качества и точности.</span><span class="brand-word" style="color: var(--blue-700);">ТендерДоки</span> сам скачает документацию закупки, найдёт все анкеты и формы, заполнит их данными вашей организации и <b>проведёт юридический анализ заказчика и проекта договора</b>. Вам останется только проверить и подать.</p>
+  <div class="wrap hero-grid">
+    <div class="hero-left">
+      <div class="pill hero-enter"><span class="dot"></span> Первый в России сервис автозаполнения тендерных заявок</div>
+      <h1 class="hero-enter">Одна ссылка — <span class="grad">полный анализ тендера и&nbsp;готовая заявка</span></h1>
+      <p class="lead hero-enter">ТендерДоки скачает документацию, найдёт формы для заполнения, проверит проект договора и покажет ключевые риски. Вы принимаете решение об участии, а сервис подготовит пакет заявки без ручной рутины.</p>
 
-    <div class="linkbox">
-      <div class="field">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
-        <input id="tenderLink" type="text" placeholder="Вставьте ссылку на закупку (zakupki.gov.ru, ЭТП…)" />
+      <div class="linkbox hero-enter">
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
+          <input id="tenderLink" type="text" placeholder="Вставьте ссылку на закупку (zakupki.gov.ru, ЭТП…)" />
+        </div>
+        <button class="btn btn-primary" onclick="runDemo()">Заполнить заявку →</button>
       </div>
-      <button class="btn btn-primary" onclick="runDemo()">Заполнить заявку →</button>
+
+      <div class="hint hero-enter">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Анализ договора и рисков</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Данные из ФНС автоматически</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Первая заявка — бесплатно</span>
+      </div>
     </div>
 
-    <div class="hint">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 44-ФЗ и 223-ФЗ</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Данные из ФНС подтягиваются автоматически</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Цена вашей заявки зашифрована и скрыта даже от нас</span>
-      <span style="color: var(--blue-700); font-weight: 600;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13"/><path d="M3 12h18"/><path d="M12 8c-2-3.5-6-3.5-6-1s4 1 6 1zm0 0c2-3.5 6-3.5 6-1s-4 1-6 1z"/></svg> Первая заявка при регистрации — бесплатно</span>
-    </div>
-
-    <div class="trust">
-      <div class="chip"><b>~7 мин</b><span>вместо нескольких часов вручную</span></div>
-      <div class="chip"><b>44 / 223-ФЗ</b><span>поддержка госзакупок</span></div>
-      <div class="chip"><b>0</b><span>выдуманных данных в заявке</span></div>
+    <div class="hero-right">
+      <!-- Анкета, заполняемая автоматически по очереди (демо автозаполнения) -->
+      <div class="hero-art hero-enter">
+        <div class="sheet">
+          <div class="sheet-clip"></div>
+          <div class="sheet-head">Заявка на участие</div>
+          <div class="sheet-sub">Форма 2 · Анкета участника закупки</div>
+          <div class="typed-row"><div class="t-lbl">Организация</div><div class="t-val" id="tf0"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="typed-row"><div class="t-lbl">ИНН</div><div class="t-val" id="tf1"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="typed-row"><div class="t-lbl">Юридический адрес</div><div class="t-val" id="tf2"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="typed-row"><div class="t-lbl">Согласие с условиями закупки</div><div class="t-val" id="tf3"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
+          <div class="stamp" id="stamp">Заполнено<br>автоматически</div>
+          <div class="sheet-note">пример автоматического заполнения формы</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -613,7 +775,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Реквизиты из ФНС по ИНН</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</li>
         </ul>
-        <a class="btn btn-ghost" href="#hero">Выбрать «Старт»</a>
+        <a class="btn btn-ghost" href="/register">Выбрать «Старт»</a>
       </div>
 
       <!-- Бизнес (популярный) -->
@@ -630,7 +792,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> История заявок и статусы по тендерам</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Приоритетная обработка</li>
         </ul>
-        <a class="btn btn-primary" href="#hero">Выбрать «Бизнес»</a>
+        <a class="btn btn-primary" href="/register">Выбрать «Бизнес»</a>
       </div>
 
       <!-- Про -->
@@ -646,7 +808,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Несколько организаций в одном кабинете</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Поддержка в приоритете</li>
         </ul>
-        <a class="btn btn-ghost" href="#hero">Выбрать «Про»</a>
+        <a class="btn btn-ghost" href="/register">Выбрать «Про»</a>
       </div>
     </div>
 
@@ -711,7 +873,7 @@
 </footer>
 
 <!-- переключатель варианта бренд-шрифта (для сравнения) -->
-<div class="font-switch">Шрифт бренда: <a class="on" href="index.html">Manrope</a> <a href="evolventa.html">Evolventa</a></div>
+
 
 <script>
   // Reveal on scroll
@@ -720,15 +882,31 @@
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
 
+  // Subtle hero parallax for the translucent 3D forms.
+  (function heroFormsParallax(){
+    const layer = document.querySelector('.hero-forms-bg');
+    if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const move = (event) => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const x = (event.clientX / window.innerWidth - .5) * 26;
+        const y = (event.clientY / window.innerHeight - .5) * 18;
+        layer.style.setProperty('--mx', x.toFixed(2) + 'px');
+        layer.style.setProperty('--my', y.toFixed(2) + 'px');
+      });
+    };
+    window.addEventListener('pointermove', move, { passive: true });
+  })();
+
   // ---- Hero: бланк печатается сам, реальным текстом, по кругу ----
   (function typedSheet(){
     if (!document.getElementById('tf0')) return;
     const fields = [
       ['tf0', 'ООО «Компания Нефтересурс»'],
       ['tf1', '5501260168'],
-      ['tf2', '1145543037463'],
-      ['tf3', '644103, г. Омск, ул. Транссибирская, д. 6'],
-      ['tf4', 'Подтверждаем ✓'],
+      ['tf2', '644103, г. Омск, ул. Транссибирская, д. 6'],
+      ['tf3', 'Подтверждаю'],
     ];
     const stamp = document.getElementById('stamp');
     const SPEED = 42, PAUSE = 320, HOLD = 2800;
@@ -736,17 +914,18 @@
 
     function typeField(i, done){
       const el = document.getElementById(fields[i][0]);
+      const row = el.closest('.typed-row');
       const text = fields[i][1];
-      el.classList.add('active');
+      row.classList.add('active');
       let p = 0;
       const t = setInterval(() => {
         p++;
-        el.innerHTML = text.slice(0, p).replace('✓', '<span style="color:#18a558">✓</span>') + (p < text.length ? caret : '');
-        if (p >= text.length){ clearInterval(t); el.classList.remove('active'); setTimeout(done, PAUSE); }
+        el.innerHTML = text.slice(0, p) + (p < text.length ? caret : '');
+        if (p >= text.length){ clearInterval(t); row.classList.remove('active'); row.classList.add('done'); setTimeout(done, PAUSE); }
       }, SPEED);
     }
     function run(){
-      fields.forEach(f => { document.getElementById(f[0]).innerHTML = ''; });
+      fields.forEach(f => { const e = document.getElementById(f[0]); e.innerHTML = ''; e.closest('.typed-row').classList.remove('active','done'); });
       stamp.classList.remove('show');
       let i = 0;
       const next = () => {
