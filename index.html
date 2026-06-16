@@ -318,7 +318,8 @@
     .linkbox { flex-direction: column; align-items: stretch; }
     .linkbox .btn-primary { width: 100%; }
   }
-  .hint { margin-top: 18px; color: var(--muted); font-size: 14px; display: flex; gap: 16px 20px; flex-wrap: wrap; justify-content: flex-start; }
+  .launch-note { margin-top: 16px; font-size: 14.5px; font-weight: 600; color: var(--blue-700); line-height: 1.5; max-width: 540px; }
+  .hint { margin-top: 12px; color: var(--muted); font-size: 14px; display: flex; gap: 16px 20px; flex-wrap: wrap; justify-content: flex-start; }
   .hint span { display: inline-flex; align-items: center; gap: 7px; }
   .hint svg { width: 16px; height: 16px; color: var(--blue-500); }
 
@@ -553,7 +554,7 @@
     </nav>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="/login">Войти</a>
-      <a class="btn btn-primary" href="/register">Попробовать</a>
+      <a class="btn btn-primary" href="/register">Получить ранний доступ →</a>
     </div>
   </div>
 </header>
@@ -578,13 +579,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
           <input id="tenderLink" type="text" placeholder="Вставьте ссылку на закупку (zakupki.gov.ru, ЭТП…)" />
         </div>
-        <button class="btn btn-primary" onclick="runDemo()">Заполнить заявку →</button>
+        <a class="btn btn-primary" href="/register">Получить ранний доступ →</a>
       </div>
 
+      <p class="launch-note hero-enter">🚀 Скоро запуск. Оставьте заявку на ранний доступ — сообщим, когда откроем.</p>
+
       <div class="hint hero-enter">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Анализ договора и рисков</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Данные из ФНС автоматически</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Первая заявка — бесплатно</span>
+        <span>Анализ договора и рисков · Реквизиты из ФНС · Данные на серверах в РФ (152-ФЗ)</span>
       </div>
     </div>
 
@@ -648,7 +649,7 @@
         <div class="num">ШАГ 04</div>
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></div>
         <h3>Получаете готовый пакет</h3>
-        <p>Формы заполнены данными вашей организации. Скачивайте .docx / .pdf и подавайте.</p>
+        <p>Формы заполнены данными вашей организации. Скачивайте .docx / .pdf и подавайте. <b style="color: var(--blue-700);">Важно:</b> сервис готовит пакет заявки. Подписание ЭЦП и подача на площадке остаются за вами — так требует регламент ЭТП.</p>
       </div>
     </div>
   </div>
@@ -660,7 +661,7 @@
     <div class="sec-head reveal" style="max-width: 880px;">
       <div class="eyebrow">Возможности</div>
       <h2>Почему <span class="brand-word" style="color: var(--blue-600);">ТендерДоки</span></h2>
-      <p style="text-align: justify; text-justify: inter-word; hyphens: auto; max-width: 860px; margin: 0 auto;"><b style="color: var(--ink);">Ноль ошибок и часы сэкономленного времени.</b> Опечатка в реквизитах или пропущенная форма — и заявку отклонят. <span class="brand-word">ТендерДоки</span> подставляет данные автоматически и всегда одинаково точно, а пакет заявки собирает за минуты — вместо нескольких часов ручной работы.</p>
+      <p style="text-align: justify; text-justify: inter-word; hyphens: auto; max-width: 860px; margin: 0 auto;"><b style="color: var(--ink);">Меньше отклонённых заявок, часы сэкономленного времени.</b> Опечатка в реквизитах или пропущенная форма — и заявку отклонят. <span class="brand-word">ТендерДоки</span> подставляет реквизиты одинаково аккуратно во все формы, а пакет заявки собирает за минуты — вместо нескольких часов ручной работы.</p>
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
@@ -671,7 +672,7 @@
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <h3>Никаких выдуманных данных</h3>
-        <p>Реквизиты берутся из вашего профиля и из ФНС. Система не придумывает данные — это значит меньше отклонённых заявок.</p>
+        <p>Реквизиты берутся только из вашего профиля и из ФНС. Если для поля нет проверенного значения — система оставит его пустым и отметит для ручного заполнения, но не выдумает значение.</p>
       </div>
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 17l8 4 8-4"/></svg></div>
@@ -687,6 +688,7 @@
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V7l8-4z"/><path d="M3 9h18"/></svg></div>
         <h3>Юридический анализ заказчика и договора</h3>
         <p>Проверяем заказчика и условия проекта договора: риски, спорные пункты, штрафы и обеспечение — чтобы вы видели подводные камни до подачи заявки.</p>
+        <p style="margin-top: 10px; font-size: 11.5px; line-height: 1.45; color: #9db3cc;">Анализ носит информационный характер и не заменяет профессиональную юридическую консультацию.</p>
       </div>
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
@@ -696,12 +698,12 @@
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
         <h3>Данные под защитой (152-ФЗ)</h3>
-        <p>Персональные данные обрабатываются на серверах в России в соответствии с требованиями законодательства.</p>
+        <p>Данные вашей организации хранятся и обрабатываются на серверах в РФ. Для ИИ-анализа документов персональные данные предварительно обезличиваются — к языковой модели уходит только текст без ваших реквизитов. Соответствие 152-ФЗ заложено в архитектуру.</p>
       </div>
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></div>
         <h3>Ваша цена скрыта даже от нас</h3>
-        <p>Ценовое предложение хранится в зашифрованном виде. Его не видят ни сотрудники сервиса, ни кто-либо ещё — конфиденциальность вашей ставки гарантирована.</p>
+        <p>Ценовое предложение хранится в зашифрованном виде. Его не видят ни сотрудники сервиса, ни кто-либо другой.</p>
       </div>
     </div>
   </div>
@@ -776,7 +778,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Реквизиты из ФНС по ИНН</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</li>
         </ul>
-        <a class="btn btn-ghost" href="/register">Выбрать «Старт»</a>
+        <a class="btn btn-ghost" href="/register">Получить ранний доступ →</a>
       </div>
 
       <!-- Бизнес (популярный) -->
@@ -793,7 +795,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> История заявок и статусы по тендерам</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Приоритетная обработка</li>
         </ul>
-        <a class="btn btn-primary" href="/register">Выбрать «Бизнес»</a>
+        <a class="btn btn-primary" href="/register">Получить ранний доступ →</a>
       </div>
 
       <!-- Про -->
@@ -809,11 +811,11 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Несколько организаций в одном кабинете</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Поддержка в приоритете</li>
         </ul>
-        <a class="btn btn-ghost" href="/register">Выбрать «Про»</a>
+        <a class="btn btn-ghost" href="/register">Получить ранний доступ →</a>
       </div>
     </div>
 
-    <p class="price-note"><b style="color: var(--blue-700);">🎁 Первая заявка при регистрации — бесплатно</b> · Неиспользованные заявки сгорают в конце месяца · Тарифы и цены — иллюстративные, демо-прототип</p>
+    <p class="price-note"><b style="color: var(--blue-700);">🎁 Ранний доступ: первым пользователям — первая заявка бесплатно.</b> Цены на старте. Оплата откроется при запуске.</p>
   </div>
 </section>
 
@@ -823,8 +825,8 @@
     <div class="cta reveal">
       <h2>Перестаньте заполнять тендерные формы вручную</h2>
       <p class="oneline" style="max-width: none;">Попробуйте ТендерДоки на своей следующей закупке. Вставьте ссылку — и посмотрите, как заявка собирается сама.</p>
-      <a class="btn btn-white" href="#hero">Вставить ссылку на тендер →</a>
-      <div style="position: relative; margin-top: 16px; font-size: 15px; color: #cfe0f5; font-weight: 600;">🎁 При регистрации первая заявка — бесплатно</div>
+      <a class="btn btn-white" href="/register">Получить ранний доступ →</a>
+      <div style="position: relative; margin-top: 16px; font-size: 15px; color: #cfe0f5; font-weight: 600;">🎁 Ранний доступ: первым пользователям — первая заявка бесплатно</div>
     </div>
   </div>
 </section>
@@ -841,7 +843,6 @@
           Тендер<b>Доки</b>
         </a>
         <p>Первый в России сервис автоматического заполнения тендерной документации. Вставьте ссылку — получите готовый пакет заявки.</p>
-        <div style="margin-top:16px"><span class="badge-demo">⚠️ Демо-прототип. Дизайн и цифры — иллюстративные.</span></div>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
