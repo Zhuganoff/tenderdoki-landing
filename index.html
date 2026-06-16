@@ -102,8 +102,9 @@
     transform: translateY(-26px);
   }
   @media (max-width: 960px){
-    .hero-grid { grid-template-columns: 1fr; gap: clamp(30px, 6vw, 42px); }
+    .hero-grid { grid-template-columns: 1fr; gap: clamp(26px, 5vw, 36px); }
     .hero-right { perspective: none; transform: none; }
+    .hero-art { max-width: 360px; margin: 0 auto; }
   }
   .hero-enter {
     animation: heroEnter .78s cubic-bezier(.2,.7,.2,1) both;
@@ -886,17 +887,23 @@
   (function heroFormsParallax(){
     const layer = document.querySelector('.hero-forms-bg');
     if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let raf = 0;
-    const move = (event) => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const x = (event.clientX / window.innerWidth - .5) * 26;
-        const y = (event.clientY / window.innerHeight - .5) * 18;
-        layer.style.setProperty('--mx', x.toFixed(2) + 'px');
-        layer.style.setProperty('--my', y.toFixed(2) + 'px');
-      });
+    // На тач-устройствах parallax по пальцу НЕ нужен — остаётся только медленный CSS-дрейф.
+    if (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) return;
+    // Мягкое, медленное следование за курсором через лерп — без дёрганья.
+    const AMP_X = 16, AMP_Y = 11, EASE = 0.045;
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+    const loop = () => {
+      cx += (tx - cx) * EASE;
+      cy += (ty - cy) * EASE;
+      layer.style.setProperty('--mx', cx.toFixed(2) + 'px');
+      layer.style.setProperty('--my', cy.toFixed(2) + 'px');
+      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) ? requestAnimationFrame(loop) : 0;
     };
-    window.addEventListener('pointermove', move, { passive: true });
+    window.addEventListener('pointermove', (e) => {
+      tx = (e.clientX / window.innerWidth - .5) * AMP_X;
+      ty = (e.clientY / window.innerHeight - .5) * AMP_Y;
+      if (!raf) raf = requestAnimationFrame(loop);
+    }, { passive: true });
   })();
 
   // ---- Hero: бланк печатается сам, реальным текстом, по кругу ----
