@@ -135,6 +135,8 @@
     opacity: .96;
     --mx: 0px;
     --my: 0px;
+    /* Лёгкий параллакс всего слоя за курсором (сам дрейф карточек — в @keyframes). */
+    transform: translate3d(var(--mx), var(--my), 0);
   }
   .bg-form {
     position: absolute;
@@ -152,7 +154,7 @@
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     transform-style: preserve-3d;
-    animation: formDrift var(--dur, 20s) ease-in-out infinite;
+    animation: roamA var(--dur, 26s) ease-in-out infinite;
     animation-delay: var(--delay, 0s);
     will-change: transform;
   }
@@ -213,28 +215,41 @@
     border-left: 0;
     transform: rotate(45deg);
   }
-  /* Позиции, глубина (z), индивидуальные акценты и тайминги. Ярче — спереди, тусклее — в глубине. */
-  .bg-form.f1 { top: 9%;  left: 2%;   --accent:#2575e6; --dur: 21s; --delay: -2s;  opacity: .78; }
-  .bg-form.f2 { top: 5%;  right: 5%;  --accent:#4f93f0; --dur: 24s; --delay: -9s;  opacity: .96; }
-  .bg-form.f3 { right: 3%; bottom: 9%; --accent:#0ea5b7; --dur: 22s; --delay: -14s; opacity: .9; }
-  .bg-form.f4 { left: 6%; bottom: 6%; --accent:#1b5fc4; --dur: 26s; --delay: -6s;  opacity: .7;  width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
-  .bg-form.f5 { top: 41%; right: 21%; --accent:#6366f1; --dur: 23s; --delay: -17s; opacity: .82; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
-  .bg-form.f6 { top: 33%; left: 16%;  --accent:#2563eb; --dur: 28s; --delay: -11s; opacity: .5;  width: clamp(92px,9vw,120px); height: clamp(114px,11vw,150px); }
-  @keyframes formDrift {
-    0%, 100% {
-      transform:
-        translate3d(calc(var(--mx) * .45), calc(-7px + var(--my) * .45), -40px)
-        rotateX(11deg) rotateY(-13deg) rotateZ(-3deg);
-    }
-    50% {
-      transform:
-        translate3d(calc(9px + var(--mx) * .65), calc(9px + var(--my) * .65), 14px)
-        rotateX(7deg) rotateY(11deg) rotateZ(3deg);
-    }
+  /* Старт-позиции распределены по всему фону (не по углам). Карточки плавно дрейфуют
+     в РАЗНЫХ направлениях (4 траектории roamA–roamD), разная длительность/задержка —
+     движение выглядит случайным и не синхронным. Ярче — спереди, тусклее — в глубине. */
+  .bg-form.f1 { top: 12%; left: 6%;   --accent:#2575e6; --dur: 26s; --delay: -2s;  opacity: .8;  animation-name: roamA; }
+  .bg-form.f2 { top: 7%;  left: 39%;  --accent:#4f93f0; --dur: 31s; --delay: -12s; opacity: .58; animation-name: roamB; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
+  .bg-form.f3 { top: 11%; right: 8%;  --accent:#0ea5b7; --dur: 28s; --delay: -7s;  opacity: .9;  animation-name: roamC; }
+  .bg-form.f4 { top: 42%; left: 3%;   --accent:#1b5fc4; --dur: 33s; --delay: -19s; opacity: .82; animation-name: roamD; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
+  .bg-form.f5 { top: 46%; right: 14%; --accent:#6366f1; --dur: 29s; --delay: -5s;  opacity: .68; animation-name: roamA; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
+  .bg-form.f6 { bottom: 9%; left: 24%; --accent:#2563eb; --dur: 34s; --delay: -15s; opacity: .6;  animation-name: roamB; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
+  .bg-form.f7 { bottom: 13%; right: 6%; --accent:#0284c7; --dur: 27s; --delay: -10s; opacity: .88; animation-name: roamC; }
+  .bg-form.f8 { top: 30%; left: 31%;  --accent:#7c3aed; --dur: 36s; --delay: -23s; opacity: .44; animation-name: roamD; width: clamp(92px,9vw,120px); height: clamp(114px,11vw,150px); }
+  /* Четыре траектории плавного дрейфа в разных направлениях (без рывков, ease-in-out). */
+  @keyframes roamA {
+    0%, 100% { transform: translate3d(0, 0, 0) rotateX(10deg) rotateY(-11deg) rotateZ(-3deg); }
+    33% { transform: translate3d(72px, -42px, 22px) rotateX(7deg) rotateY(9deg) rotateZ(2deg); }
+    66% { transform: translate3d(-34px, 54px, -16px) rotateX(12deg) rotateY(-6deg) rotateZ(-2deg); }
+  }
+  @keyframes roamB {
+    0%, 100% { transform: translate3d(0, 0, 0) rotateX(9deg) rotateY(12deg) rotateZ(3deg); }
+    33% { transform: translate3d(-66px, 38px, -20px) rotateX(13deg) rotateY(-8deg) rotateZ(-3deg); }
+    66% { transform: translate3d(44px, -56px, 18px) rotateX(7deg) rotateY(10deg) rotateZ(4deg); }
+  }
+  @keyframes roamC {
+    0%, 100% { transform: translate3d(0, 0, 0) rotateX(11deg) rotateY(-8deg) rotateZ(-2deg); }
+    33% { transform: translate3d(52px, 52px, 14px) rotateX(8deg) rotateY(8deg) rotateZ(3deg); }
+    66% { transform: translate3d(-58px, -32px, -16px) rotateX(12deg) rotateY(-10deg) rotateZ(-4deg); }
+  }
+  @keyframes roamD {
+    0%, 100% { transform: translate3d(0, 0, 0) rotateX(8deg) rotateY(10deg) rotateZ(2deg); }
+    33% { transform: translate3d(-48px, -52px, 18px) rotateX(12deg) rotateY(-9deg) rotateZ(-3deg); }
+    66% { transform: translate3d(62px, 32px, -14px) rotateX(7deg) rotateY(11deg) rotateZ(3deg); }
   }
   @media (max-width: 960px){
-    .hero-forms-bg { opacity: .55; inset: -6% -26% 10%; }
-    .bg-form.f1, .bg-form.f5, .bg-form.f6 { display: none; }
+    .hero-forms-bg { opacity: .5; inset: -6% -24% 10%; }
+    .bg-form.f2, .bg-form.f5, .bg-form.f8 { display: none; }
   }
   @media (prefers-reduced-motion: reduce){
     .bg-form { animation: none; }
@@ -595,6 +610,8 @@
     <div class="bg-form f4"><span class="bf-h">Заявка (часть 1)</span><b></b><span></span><i></i><em></em></div>
     <div class="bg-form f5"><span class="bf-h">Карта предприятия</span><b></b><i></i><span></span><em></em></div>
     <div class="bg-form f6"><span class="bf-h">Ценовое предложение</span><b></b><span></span><i></i><em></em></div>
+    <div class="bg-form f7"><span class="bf-h">Фирменный бланк</span><b></b><i></i><span></span><em></em></div>
+    <div class="bg-form f8"><span class="bf-h">Извещение</span><b></b><span></span><i></i><em></em></div>
   </div>
   <div class="wrap hero-grid">
     <div class="hero-left">
