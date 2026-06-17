@@ -127,16 +127,12 @@
   /* Premium background: реальные документы заявки плавают в 3D — ярко, «дорого-богато» */
   .hero-forms-bg {
     position: absolute;
-    inset: -14% -10% -12%;
+    inset: 0;
     z-index: 0;
     pointer-events: none;
     perspective: 1300px;
     transform-style: preserve-3d;
     opacity: .96;
-    --mx: 0px;
-    --my: 0px;
-    /* Лёгкий параллакс всего слоя за курсором (сам дрейф карточек — в @keyframes). */
-    transform: translate3d(var(--mx), var(--my), 0);
   }
   .bg-form {
     position: absolute;
@@ -995,27 +991,71 @@
     });
   }
 
-  // Subtle hero parallax for the translucent 3D forms.
-  (function heroFormsParallax(){
+  // ---- Плавающие документы: дрейф с ОТТАЛКИВАНИЕМ от краёв (физика отскока) ----
+  // Каждая карточка движется со своей скоростью; у границы слоя скорость отражается —
+  // документ «отталкивается» от края и не уходит за пределы страницы.
+  (function floatBounce(){
     const layer = document.querySelector('.hero-forms-bg');
-    if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    // На тач-устройствах parallax по пальцу НЕ нужен — остаётся только медленный CSS-дрейф.
-    if (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) return;
-    // Мягкое, медленное следование за курсором через лерп — без дёрганья.
-    const AMP_X = 16, AMP_Y = 11, EASE = 0.045;
-    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-    const loop = () => {
-      cx += (tx - cx) * EASE;
-      cy += (ty - cy) * EASE;
-      layer.style.setProperty('--mx', cx.toFixed(2) + 'px');
-      layer.style.setProperty('--my', cy.toFixed(2) + 'px');
-      raf = (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) ? requestAnimationFrame(loop) : 0;
-    };
-    window.addEventListener('pointermove', (e) => {
-      tx = (e.clientX / window.innerWidth - .5) * AMP_X;
-      ty = (e.clientY / window.innerHeight - .5) * AMP_Y;
-      if (!raf) raf = requestAnimationFrame(loop);
-    }, { passive: true });
+    if (!layer) return;
+    const cards = Array.prototype.slice.call(layer.querySelectorAll('.bg-form'));
+    if (!cards.length) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let W = 0, H = 0, t = 0, raf = 0;
+    const items = cards.map(function(el, i){
+      return {
+        el: el, x: 0, y: 0, vx: 0, vy: 0, cw: 0, ch: 0,
+        rx: 8 + (i % 3) * 2,
+        ryBase: (i % 2 ? 1 : -1) * (9 + (i % 3) * 2),
+        rzBase: (i % 2 ? 1 : -1) * 3,
+        phase: i * 0.8,
+      };
+    });
+
+    function place(it){
+      const ry = it.ryBase + Math.sin(t * 0.0006 + it.phase) * 4;   // лёгкое «дыхание» наклона
+      const rz = it.rzBase + Math.sin(t * 0.0004 + it.phase) * 1.5;
+      it.el.style.transform =
+        'translate3d(' + it.x.toFixed(1) + 'px,' + it.y.toFixed(1) + 'px,0)' +
+        ' rotateX(' + it.rx + 'deg) rotateY(' + ry.toFixed(1) + 'deg) rotateZ(' + rz.toFixed(1) + 'deg)';
+    }
+
+    function layout(){
+      W = layer.clientWidth; H = layer.clientHeight;
+      items.forEach(function(it, i){
+        it.cw = it.el.offsetWidth; it.ch = it.el.offsetHeight;
+        const maxX = Math.max(0, W - it.cw), maxY = Math.max(0, H - it.ch);
+        it.x = Math.min(maxX, (0.06 + 0.88 * (((i * 0.41) + 0.11) % 1)) * maxX);
+        it.y = Math.min(maxY, (0.08 + 0.84 * (((i * 0.67) + 0.23) % 1)) * maxY);
+        const ang = i * 1.37 + 0.5, sp = 0.22 + (i % 3) * 0.05;   // медленно, px/кадр
+        it.vx = Math.cos(ang) * sp; it.vy = Math.sin(ang) * sp;
+        place(it);
+      });
+    }
+
+    function step(){
+      t += 16;
+      for (let k = 0; k < items.length; k++){
+        const it = items[k];
+        const maxX = Math.max(0, W - it.cw), maxY = Math.max(0, H - it.ch);
+        it.x += it.vx; it.y += it.vy;
+        if (it.x <= 0){ it.x = 0; it.vx = Math.abs(it.vx); }
+        else if (it.x >= maxX){ it.x = maxX; it.vx = -Math.abs(it.vx); }
+        if (it.y <= 0){ it.y = 0; it.vy = Math.abs(it.vy); }
+        else if (it.y >= maxY){ it.y = maxY; it.vy = -Math.abs(it.vy); }
+        place(it);
+      }
+      raf = requestAnimationFrame(step);
+    }
+
+    // Позицию задаём через transform → обнуляем CSS-привязки и CSS-дрейф.
+    cards.forEach(function(el){
+      el.style.left = '0'; el.style.top = '0'; el.style.right = 'auto'; el.style.bottom = 'auto';
+      el.style.animation = 'none';
+    });
+    layout();
+    window.addEventListener('resize', function(){ layout(); }, { passive: true });
+    if (!reduce) raf = requestAnimationFrame(step);
   })();
 
   // ---- Hero: бланк печатается сам, реальным текстом, по кругу ----
