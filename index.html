@@ -132,7 +132,8 @@
     pointer-events: none;
     perspective: 1300px;
     transform-style: preserve-3d;
-    opacity: .96;
+    opacity: .5;
+    filter: blur(2px);   /* мягкий фон — документы не бросаются в глаза, ненавязчивы */
   }
   .bg-form {
     position: absolute;
@@ -244,7 +245,7 @@
     66% { transform: translate3d(62px, 32px, -14px) rotateX(7deg) rotateY(11deg) rotateZ(3deg); }
   }
   @media (max-width: 960px){
-    .hero-forms-bg { opacity: .5; inset: -6% -24% 10%; }
+    .hero-forms-bg { opacity: .4; }
     .bg-form.f2, .bg-form.f5, .bg-form.f8 { display: none; }
   }
   @media (prefers-reduced-motion: reduce){
@@ -1027,22 +1028,71 @@
         const maxX = Math.max(0, W - it.cw), maxY = Math.max(0, H - it.ch);
         it.x = Math.min(maxX, (0.06 + 0.88 * (((i * 0.41) + 0.11) % 1)) * maxX);
         it.y = Math.min(maxY, (0.08 + 0.84 * (((i * 0.67) + 0.23) % 1)) * maxY);
-        const ang = i * 1.37 + 0.5, sp = 0.22 + (i % 3) * 0.05;   // медленно, px/кадр
+        const ang = i * 1.37 + 0.5, sp = 0.10 + (i % 3) * 0.025;   // очень медленно, px/кадр
         it.vx = Math.cos(ang) * sp; it.vy = Math.sin(ang) * sp;
-        place(it);
       });
+      // Расталкиваем стартовые позиции, чтобы документы не стартовали внахлёст/в куче.
+      for (let iter = 0; iter < 16; iter++){
+        for (let a = 0; a < items.length; a++){
+          for (let b = a + 1; b < items.length; b++){
+            const A = items[a], B = items[b];
+            const dx = (B.x + B.cw / 2) - (A.x + A.cw / 2);
+            const dy = (B.y + B.ch / 2) - (A.y + A.ch / 2);
+            const ox = (A.cw / 2 + B.cw / 2 + 12) - Math.abs(dx);
+            const oy = (A.ch / 2 + B.ch / 2 + 12) - Math.abs(dy);
+            if (ox > 0 && oy > 0){
+              const sx = dx < 0 ? -1 : 1, sy = dy < 0 ? -1 : 1;
+              if (ox < oy){ A.x -= sx * ox / 2; B.x += sx * ox / 2; }
+              else { A.y -= sy * oy / 2; B.y += sy * oy / 2; }
+            }
+          }
+        }
+        items.forEach(function(it){
+          it.x = Math.max(0, Math.min(Math.max(0, W - it.cw), it.x));
+          it.y = Math.max(0, Math.min(Math.max(0, H - it.ch), it.y));
+        });
+      }
+      items.forEach(place);
     }
 
+    const MAXV = 0.28, GAP = 12;   // макс. скорость (px/кадр) и зазор между документами
     function step(){
       t += 16;
+      // 1) интеграция движения
+      for (let k = 0; k < items.length; k++){ items[k].x += items[k].vx; items[k].y += items[k].vy; }
+      // 2) взаимное ОТТАЛКИВАНИЕ: документы не наезжают друг на друга и не сбиваются в кучу.
+      //    Разводим перекрывающиеся по оси меньшего проникновения и разворачиваем скорости.
+      for (let a = 0; a < items.length; a++){
+        for (let b = a + 1; b < items.length; b++){
+          const A = items[a], B = items[b];
+          const dx = (B.x + B.cw / 2) - (A.x + A.cw / 2);
+          const dy = (B.y + B.ch / 2) - (A.y + A.ch / 2);
+          const ox = (A.cw / 2 + B.cw / 2 + GAP) - Math.abs(dx);
+          const oy = (A.ch / 2 + B.ch / 2 + GAP) - Math.abs(dy);
+          if (ox > 0 && oy > 0){
+            const sx = dx < 0 ? -1 : 1, sy = dy < 0 ? -1 : 1;
+            if (ox < oy){
+              A.x -= sx * ox / 2; B.x += sx * ox / 2;
+              A.vx = -sx * Math.max(Math.abs(A.vx), 0.09);
+              B.vx =  sx * Math.max(Math.abs(B.vx), 0.09);
+            } else {
+              A.y -= sy * oy / 2; B.y += sy * oy / 2;
+              A.vy = -sy * Math.max(Math.abs(A.vy), 0.09);
+              B.vy =  sy * Math.max(Math.abs(B.vy), 0.09);
+            }
+          }
+        }
+      }
+      // 3) отскок от краёв + ограничение скорости + отрисовка
       for (let k = 0; k < items.length; k++){
         const it = items[k];
         const maxX = Math.max(0, W - it.cw), maxY = Math.max(0, H - it.ch);
-        it.x += it.vx; it.y += it.vy;
         if (it.x <= 0){ it.x = 0; it.vx = Math.abs(it.vx); }
         else if (it.x >= maxX){ it.x = maxX; it.vx = -Math.abs(it.vx); }
         if (it.y <= 0){ it.y = 0; it.vy = Math.abs(it.vy); }
         else if (it.y >= maxY){ it.y = maxY; it.vy = -Math.abs(it.vy); }
+        const m = Math.hypot(it.vx, it.vy);
+        if (m > MAXV){ it.vx = it.vx / m * MAXV; it.vy = it.vy / m * MAXV; }
         place(it);
       }
       raf = requestAnimationFrame(step);
