@@ -97,14 +97,13 @@
     isolation: isolate;
   }
   .hero .wrap { position: relative; z-index: 1; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr); gap: clamp(28px, 3.8vw, 52px); align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr); gap: clamp(28px, 3.8vw, 52px); align-items: start; }
   .hero-left { text-align: left; min-width: 0; }
   .hero-right {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     perspective: 1500px;
     min-width: 0;
-    transform: translateY(-26px);
   }
   @media (max-width: 960px){
     .hero-grid { grid-template-columns: 1fr; gap: clamp(26px, 5vw, 36px); }
@@ -319,9 +318,9 @@
   @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 4px rgba(255,255,255,.28);} 50%{ box-shadow: 0 0 0 7px rgba(255,255,255,.12);} }
   .hero h1 {
     font-family: 'Unbounded', 'Golos Text', sans-serif;
-    font-size: clamp(24px, 3.4vw, 43px); line-height: 1.18; letter-spacing: -.02em;
-    font-weight: 700; color: var(--ink); max-width: 620px; margin: 0 0 clamp(16px, 2vw, 22px);
-    text-wrap: pretty;
+    font-size: clamp(22px, 3vw, 38px); line-height: 1.18; letter-spacing: -.02em;
+    font-weight: 700; color: var(--ink); max-width: none; margin: 0 0 clamp(16px, 2vw, 22px);
+    white-space: nowrap;
   }
   .hero h1 .grad {
     background: linear-gradient(120deg, var(--blue-600), var(--blue-400));
@@ -553,6 +552,7 @@
     .sec { padding: 56px 0; }
     .sec-head { margin-bottom: 38px; }
     .hero { padding: 48px 0 44px; }
+    .hero h1 { white-space: normal; font-size: clamp(26px, 6vw, 34px); }
     .nav { height: 62px; }
     .logo { font-size: 19px; }
     .nav-cta .btn { padding: 9px 15px; font-size: 14px; }
@@ -611,10 +611,11 @@
     <div class="bg-form f7"><span class="bf-h">Фирменный бланк</span><b></b><i></i><span></span><em></em></div>
     <div class="bg-form f8"><span class="bf-h">Извещение</span><b></b><span></span><i></i><em></em></div>
   </div>
-  <div class="wrap hero-grid">
+  <div class="wrap">
+    <div class="pill hero-enter"><span class="dot"></span> AI-сервис подготовки тендерных заявок по 44-ФЗ и 223-ФЗ</div>
+    <h1 class="hero-enter">Ваш тендерный отдел — <span class="grad">теперь это AI</span></h1>
+    <div class="hero-grid">
     <div class="hero-left">
-      <div class="pill hero-enter"><span class="dot"></span> AI-сервис подготовки тендерных заявок по 44-ФЗ и 223-ФЗ</div>
-      <h1 class="hero-enter">Ваш тендерный<br>отдел — <span class="grad">теперь это AI</span></h1>
       <p class="lead hero-enter">Проверяет заказчика и контракт, готовит все формы и подсказывает по каждому полю. Вам остаётся заполнить и подать — уверенно и без ошибок.</p>
 
       <div class="linkbox hero-enter">
@@ -645,6 +646,7 @@
           <div class="sheet-note">пример автоматического заполнения формы</div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </section>
