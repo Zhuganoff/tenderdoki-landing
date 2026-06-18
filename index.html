@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@800&family=Golos+Text:wght@700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" />
 <style>
   :root {
     --blue-900: #0a2540;
@@ -255,7 +256,7 @@
 
   /* Floating document graphic */
   .hero-art {
-    width: 100%; max-width: 490px; margin: 0;
+    width: 100%; max-width: 400px; margin: 0;
     position: relative; z-index: 1; text-align: left;
   }
   /* «Печатный бланк»: поля заполняются реальным текстом, посимвольно */
@@ -298,6 +299,54 @@
   }
   .stamp.show { opacity: .93; transform: rotate(-12deg) scale(1); }
   .sheet-note { margin-top: 14px; text-align: center; font-size: 10px; color: #9db3cc; }
+
+  /* ===== Виджет «живой отчёт» в hero (вместо печатной анкеты); наклон+float как у анкеты ===== */
+  .td-widget {
+    --bg-primary:#ffffff; --bg-secondary:#f4f6f8; --border-soft:#e5e7eb; --border-mid:#d1d5db;
+    --text-primary:#1a1d21; --text-secondary:#6b7280; --text-tertiary:#9ca3af;
+    --accent:#2575e6; --accent-bg:#eef5fe; --warn:#b45309; --warn-bg:#fef3c7; --success:#16a34a;
+    width:100%; max-width:100%; font-family:'Inter',-apple-system,sans-serif; text-align:left;
+  }
+  .td-card {
+    background:var(--bg-primary); border:1px solid rgba(143,188,247,.25); border-radius:16px; overflow:hidden;
+    box-shadow: 0 36px 72px -28px rgba(10,37,64,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(143,188,247,.20);
+    transform: rotate(3deg) rotateY(-5deg) rotateX(1.5deg); transform-style: preserve-3d;
+    animation: floaty 7s ease-in-out infinite;
+  }
+  .td-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border-soft); }
+  .td-dots { display:flex; gap:6px; }
+  .td-dots span { width:9px; height:9px; border-radius:50%; background:var(--border-mid); }
+  .td-url { flex:1; font-size:11.5px; color:var(--text-tertiary); background:var(--bg-secondary); border-radius:6px; padding:5px 9px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .td-statusbar { padding:13px 16px 6px; display:flex; align-items:center; gap:9px; min-height:22px; }
+  #td-spin { width:15px; height:15px; border:2px solid var(--border-mid); border-top-color:var(--accent); border-radius:50%; display:inline-block; }
+  #td-spin.spinning { animation:td-rot .8s linear infinite; }
+  #td-spin.done { border:none; }
+  #td-status { font-size:13px; font-weight:500; color:var(--text-primary); }
+  .td-body { padding:6px 16px 16px; display:flex; flex-direction:column; gap:9px; }
+  .td-row { opacity:0; transform:translateY(8px); transition:all .5s; }
+  .td-block { background:var(--bg-secondary); border-radius:10px; padding:11px 12px; }
+  .td-block-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .td-block-head .ti { font-size:16px; }
+  .td-block-title { font-size:12.5px; font-weight:500; color:var(--text-primary); }
+  .td-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .td-chip { font-size:11px; border-radius:6px; padding:3px 8px; }
+  .td-chip-warn { background:var(--warn-bg); color:var(--warn); }
+  .td-chip-soft { background:var(--bg-primary); color:var(--text-secondary); border:1px solid var(--border-soft); }
+  .td-files { display:flex; flex-direction:column; gap:6px; }
+  .td-file { display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg-primary); border:1px solid var(--border-soft); border-radius:8px; padding:8px 11px; }
+  .td-file-name { font-size:12px; display:flex; align-items:center; gap:7px; color:var(--text-primary); }
+  .td-file-name .ti { color:var(--accent); }
+  .td-file-state { font-size:11px; color:var(--text-secondary); white-space:nowrap; }
+  .td-report { background:var(--accent-bg); border:1px solid var(--accent); border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .td-report-left { display:flex; align-items:center; gap:11px; }
+  .td-report-icon { width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .td-report-icon .ti { font-size:18px; }
+  .td-report-title { margin:0; font-size:13.5px; font-weight:600; color:var(--accent); }
+  .td-report-sub { margin:2px 0 0; font-size:11.5px; color:var(--text-secondary); }
+  .td-report-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 13px; font-size:12.5px; font-weight:500; cursor:pointer; white-space:nowrap; }
+  @keyframes td-rot { to { transform:rotate(360deg); } }
+  @media (max-width: 960px){ .td-card { transform:none; animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .td-card { animation:none; } }
   .hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
     background:
@@ -632,18 +681,70 @@
     </div>
 
     <div class="hero-right">
-      <!-- Анкета, заполняемая автоматически по очереди (демо автозаполнения) -->
+      <!-- «Живой отчёт»: AI скачивает документацию, проверяет заказчика и договор, собирает формы, готовит отчёт -->
       <div class="hero-art hero-enter">
-        <div class="sheet">
-          <div class="sheet-clip"></div>
-          <div class="sheet-head">Заявка на участие</div>
-          <div class="sheet-sub">Форма 2 · Анкета участника закупки</div>
-          <div class="typed-row"><div class="t-lbl">Организация</div><div class="t-val" id="tf0"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
-          <div class="typed-row"><div class="t-lbl">ИНН</div><div class="t-val" id="tf1"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
-          <div class="typed-row"><div class="t-lbl">Юридический адрес</div><div class="t-val" id="tf2"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
-          <div class="typed-row"><div class="t-lbl">Согласие с условиями закупки</div><div class="t-val" id="tf3"></div><span class="t-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></div>
-          <div class="stamp" id="stamp">Заполнено<br>автоматически</div>
-          <div class="sheet-note">пример автоматического заполнения формы</div>
+        <div class="td-widget">
+          <div class="td-card">
+            <div class="td-head">
+              <div class="td-dots"><span></span><span></span><span></span></div>
+              <div class="td-url">zakupki.gov.ru/...00000000000000</div>
+            </div>
+            <div class="td-statusbar">
+              <span id="td-spin" class="spinning"></span>
+              <span id="td-status">Скачиваем документацию…</span>
+            </div>
+            <div class="td-body">
+              <div class="td-row" data-step="1">
+                <div class="td-block">
+                  <div class="td-block-head">
+                    <i class="ti ti-building-bank" style="color:var(--warn);"></i>
+                    <span class="td-block-title">Заказчик проверен</span>
+                  </div>
+                  <div class="td-chips">
+                    <span class="td-chip td-chip-warn">⚠ 2 спора с поставщиками</span>
+                    <span class="td-chip td-chip-soft">1 жалоба в ФАС</span>
+                    <span class="td-chip td-chip-soft">120 закупок в год</span>
+                  </div>
+                </div>
+              </div>
+              <div class="td-row" data-step="2">
+                <div class="td-block">
+                  <div class="td-block-head">
+                    <i class="ti ti-shield-check" style="color:var(--accent);"></i>
+                    <span class="td-block-title">Договор проверен</span>
+                  </div>
+                  <div class="td-chips">
+                    <span class="td-chip td-chip-warn">Обеспечение 30%</span>
+                    <span class="td-chip td-chip-soft">Штраф 0,1%/день</span>
+                    <span class="td-chip td-chip-soft">Срок 20 дней</span>
+                  </div>
+                </div>
+              </div>
+              <div class="td-row" data-step="3">
+                <div class="td-block-head">
+                  <i class="ti ti-folder" style="color:var(--accent);"></i>
+                  <span class="td-block-title">Все формы собраны в пакет — 3 файла</span>
+                </div>
+                <div class="td-files" style="margin-top:8px;">
+                  <div class="td-file"><span class="td-file-name"><i class="ti ti-file-text"></i> Анкета участника.docx</span><span class="td-file-state">готова к заполнению</span></div>
+                  <div class="td-file"><span class="td-file-name"><i class="ti ti-file-text"></i> Технические характеристики.docx</span><span class="td-file-state">готова к заполнению</span></div>
+                  <div class="td-file"><span class="td-file-name"><i class="ti ti-file-text"></i> Ценовое предложение.docx</span><span class="td-file-state">готова к заполнению</span></div>
+                </div>
+              </div>
+              <div class="td-row" data-step="4">
+                <div class="td-report">
+                  <div class="td-report-left">
+                    <div class="td-report-icon"><i class="ti ti-checks"></i></div>
+                    <div>
+                      <p class="td-report-title">Отчёт готов</p>
+                      <p class="td-report-sub">Заказчик, договор и формы — в одном месте</p>
+                    </div>
+                  </div>
+                  <button class="td-report-btn">Открыть отчёт →</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1202,6 +1303,40 @@
     };
     tick();
   }
+</script>
+
+<!-- Hero «живой отчёт»: цикл скачивание → заказчик → договор → формы → отчёт -->
+<script>
+(function(){
+  const status = document.getElementById('td-status');
+  const spin   = document.getElementById('td-spin');
+  if (!status || !spin) return;
+  const rows = Array.from(document.querySelectorAll('.td-row'));
+  const stages = [
+    { t:'Скачиваем документацию…', show:null, delay:1100 },
+    { t:'Проверяем заказчика…',    show:1,    delay:1300 },
+    { t:'Анализируем договор…',    show:2,    delay:1300 },
+    { t:'Собираем формы в пакет…', show:3,    delay:1300 },
+    { t:'Формируем отчёт…',        show:null, delay:900  },
+    { t:'✓ Отчёт готов', done:true, show:4,   delay:2800 },
+  ];
+  function reset(){
+    rows.forEach(r => { r.style.opacity=0; r.style.transform='translateY(8px)'; });
+    spin.className='spinning'; spin.textContent=''; spin.style.color=''; spin.style.fontSize='';
+    status.style.color='var(--text-primary)';
+  }
+  function play(i){
+    if(i >= stages.length){ setTimeout(()=>{ reset(); play(0); }, 1200); return; }
+    const s = stages[i];
+    status.textContent = s.t;
+    if(s.show){ const r = rows.find(x=>x.dataset.step==s.show); if(r){ r.style.opacity=1; r.style.transform='translateY(0)'; } }
+    if(s.done){ spin.className='done'; spin.textContent='✓'; spin.style.color='var(--success)'; spin.style.fontSize='16px'; status.style.color='var(--success)'; }
+    else { spin.className='spinning'; spin.textContent=''; status.style.color='var(--text-primary)'; }
+    setTimeout(()=>play(i+1), s.delay);
+  }
+  reset();
+  setTimeout(()=>play(0), 300);
+})();
 </script>
 </body>
 </html>
