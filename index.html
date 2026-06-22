@@ -99,10 +99,10 @@
   }
   .hero .wrap { position: relative; z-index: 1; }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr); gap: clamp(28px, 3.8vw, 52px); align-items: start; }
-  .hero-left { text-align: left; min-width: 0; align-self: center; }
+  .hero-left { text-align: left; min-width: 0; }
   .hero-right {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     perspective: 1500px;
     min-width: 0;
   }
@@ -256,7 +256,7 @@
 
   /* Floating document graphic */
   .hero-art {
-    width: 100%; max-width: 400px; margin: 22px 28px 0 0;
+    width: 100%; max-width: 400px; margin: 0;
     position: relative; z-index: 1; text-align: left;
   }
   /* «Печатный бланк»: поля заполняются реальным текстом, посимвольно */
@@ -367,7 +367,7 @@
   @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 4px rgba(255,255,255,.28);} 50%{ box-shadow: 0 0 0 7px rgba(255,255,255,.12);} }
   .hero h1 {
     font-family: 'Unbounded', 'Golos Text', sans-serif;
-    font-size: clamp(20px, 2.9vw, 35px); line-height: 1.18; letter-spacing: -.02em;
+    font-size: clamp(24px, 3.4vw, 40px); line-height: 1.18; letter-spacing: -.02em;
     font-weight: 700; color: var(--ink); max-width: none; margin: 0 0 clamp(16px, 2vw, 22px);
     white-space: nowrap;
   }
@@ -660,11 +660,10 @@
     <div class="bg-form f7"><span class="bf-h">Фирменный бланк</span><b></b><i></i><span></span><em></em></div>
     <div class="bg-form f8"><span class="bf-h">Извещение</span><b></b><span></span><i></i><em></em></div>
   </div>
-  <div class="wrap">
-    <div class="pill hero-enter"><span class="dot"></span> AI-сервис подготовки тендерных заявок по 44-ФЗ и 223-ФЗ</div>
-    <h1 class="hero-enter">Ваш тендерный отдел — <span class="grad">теперь это ИИ помощник</span></h1>
-    <div class="hero-grid">
+  <div class="wrap hero-grid">
     <div class="hero-left">
+      <div class="pill hero-enter"><span class="dot"></span> AI-сервис подготовки тендерных заявок по 44-ФЗ и 223-ФЗ</div>
+      <h1 class="hero-enter">Ваш тендерный отдел <span class="grad">—</span><br><span class="grad">теперь это ИИ помощник</span></h1>
       <p class="lead hero-enter">Проверяет заказчика и контракт, готовит все формы и подсказывает по каждому полю. Вам остаётся заполнить и подать — уверенно и без ошибок.</p>
 
       <div class="linkbox hero-enter">
@@ -744,7 +743,6 @@
           </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </section>
