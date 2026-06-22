@@ -96,7 +96,6 @@
     position: relative;
     overflow: hidden;
     isolation: isolate;
-    background: linear-gradient(180deg, #0a2540 0%, #0c2f54 100%);
   }
   .hero .wrap { position: relative; z-index: 1; }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr); gap: clamp(28px, 3.8vw, 52px); align-items: start; }
@@ -351,15 +350,15 @@
   .hero::before {
     content: ""; position: absolute; inset: 0; z-index: 0;
     background:
-      radial-gradient(900px 480px at 78% -8%, rgba(37,117,230,.28), transparent 60%),
-      radial-gradient(700px 420px at 6% 18%, rgba(28,100,196,.20), transparent 55%),
-      linear-gradient(180deg, #0a2540 0%, #0c2f54 70%);
+      radial-gradient(900px 480px at 78% -8%, var(--blue-100), transparent 60%),
+      radial-gradient(700px 420px at 6% 18%, #eaf3ff, transparent 55%),
+      linear-gradient(180deg, var(--blue-50), #fff 70%);
   }
   .pill {
     display: inline-flex; align-items: center; gap: 11px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(143,188,247,.28);
-    color: #cfe0f5; font-weight: 700; font-size: clamp(12.5px, 1.4vw, 14px); letter-spacing: .01em;
+    background: var(--blue-100);
+    border: 1px solid var(--blue-300);
+    color: var(--blue-700); font-weight: 700; font-size: clamp(12.5px, 1.4vw, 14px); letter-spacing: .01em;
     padding: 9px 18px; border-radius: 999px;
     margin-bottom: clamp(22px, 3vw, 30px);
   }
@@ -369,24 +368,24 @@
   .hero h1 {
     font-family: 'Unbounded', 'Golos Text', sans-serif;
     font-size: clamp(24px, 3.4vw, 40px); line-height: 1.18; letter-spacing: -.02em;
-    font-weight: 700; color: #ffffff; max-width: none; margin: 0 0 clamp(16px, 2vw, 22px);
+    font-weight: 700; color: var(--ink); max-width: none; margin: 0 0 clamp(16px, 2vw, 22px);
     white-space: nowrap;
   }
   .hero h1 .grad {
-    background: linear-gradient(120deg, #5aa0ff, #8fc0ff);
+    background: linear-gradient(120deg, var(--blue-600), var(--blue-400));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .hero p.lead {
-    font-size: clamp(16px, 1.85vw, 20px); line-height: 1.6; color: #c2d2e6;
+    font-size: clamp(16px, 1.85vw, 20px); line-height: 1.6; color: var(--muted);
     max-width: 620px; margin: 0 0 clamp(26px, 3vw, 34px);
     text-align: justify; text-justify: inter-word; hyphens: none; overflow-wrap: normal; word-break: normal;
   }
-  .hero p.lead b { color: #9fc4ff; font-weight: 700; }
+  .hero p.lead b { color: var(--blue-700); font-weight: 700; }
   .brand-word { font-family: 'Unbounded', 'Manrope', sans-serif; font-weight: 700; letter-spacing: -.03em; }
 
   .hero-free { display:inline-flex; align-items:center; gap:9px; margin: 16px 0 2px; padding: 9px 16px; border-radius: 999px;
-    background: rgba(255,255,255,.07); color: #dce8f7; font-size: clamp(13px,1.5vw,15px); font-weight: 600; border: 1px solid rgba(143,188,247,.25); }
-  .hero-free b { color: #8fc0ff; font-weight: 800; }
+    background: var(--blue-50); color: var(--blue-700); font-size: clamp(13px,1.5vw,15px); font-weight: 600; border: 1px solid var(--blue-100); }
+  .hero-free b { color: var(--blue-600); font-weight: 800; }
   .hf-spark { color: #f5a623; font-size: 16px; }
 
   /* ---------- Link input (the core idea) ---------- */
@@ -413,7 +412,7 @@
     .linkbox { flex-direction: column; align-items: stretch; }
     .linkbox .btn-primary { width: 100%; }
   }
-  .hint { margin-top: 16px; color: #8ea7c4; font-size: 14px; display: flex; gap: 16px 20px; flex-wrap: wrap; justify-content: flex-start; }
+  .hint { margin-top: 16px; color: var(--muted); font-size: 14px; display: flex; gap: 16px 20px; flex-wrap: wrap; justify-content: flex-start; }
   .hint span { display: inline-flex; align-items: center; gap: 7px; }
   .hint svg { width: 16px; height: 16px; color: var(--blue-500); }
 
