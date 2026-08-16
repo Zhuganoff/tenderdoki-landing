@@ -3,31 +3,43 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Тендер-ИИ — первый в России сервис автозаполнения тендерных заявок</title>
-<meta name="description" content="Тендер-ИИ — первый в России сервис, который сам скачивает документацию закупки, распознаёт анкеты и формы и заполняет их данными вашей организации. Вставьте ссылку на тендер — получите готовый пакет заявки." />
+<title>Тендер-ИИ — анализ закупок и подготовка заявки (44-ФЗ / 223-ФЗ)</title>
+<meta name="description" content="Тендер-ИИ — сервис, который сам скачивает документацию закупки, анализирует риски и заказчика и готовит формы заявки с подсказкой по каждому полю. Вставьте ссылку на тендер — получите разбор и готовый к заполнению пакет." />
+<!-- Фавиконы отдаёт Next из src/app (favicon.ico / icon.svg / apple-icon.png) -->
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/svg+xml" href="/icon.svg" />
+<link rel="apple-touch-icon" href="/apple-icon.png" />
+<meta name="theme-color" content="#8781c6" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@800&family=Golos+Text:wght@700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" />
 <style>
   :root {
-    --blue-900: #0a2540;
-    --blue-800: #103a66;
-    --blue-700: #14508c;
-    --blue-600: #1c64c4;
-    --blue-500: #2575e6;
-    --blue-400: #4f93f0;
-    --blue-300: #8fbcf7;
-    --blue-100: #e3eefb;
-    --blue-50:  #f3f8ff;
-    --ink: #0a2540;
-    --muted: #5a708a;
+    /* Бренд-шкала — ФИОЛЕТОВАЯ (едина с кабинетом, см. skill tender-ii-design).
+       Имена --blue-* сохранены исторически (на них завязано много правил), но
+       значения теперь фиолетовые: primary #8781c6, hover #7a73bd, графит #2b2833. */
+    --blue-900: #2b2833;
+    --blue-800: #2a2450;
+    --blue-700: #46426b;
+    --blue-600: #7a73bd;
+    --blue-500: #8781c6;
+    --blue-400: #938dcb;
+    --blue-300: #c5c1e0;
+    --blue-100: #e6e3f0;
+    --blue-50:  #f1eff6;
+    --ink: #2b2833;
+    --muted: #6b6784;
     --white: #ffffff;
-    --line: #dce7f5;
+    --line: #e9e4f7;
     --radius: 18px;
-    --shadow-sm: 0 2px 10px rgba(16,58,102,.06);
-    --shadow-md: 0 12px 36px rgba(16,58,102,.12);
-    --shadow-lg: 0 30px 70px rgba(16,58,102,.18);
+    --shadow-sm: 0 2px 10px rgba(30,27,51,.06);
+    --shadow-md: 0 12px 36px rgba(76,63,176,.14);
+    --shadow-lg: 0 30px 70px rgba(76,63,176,.20);
+    /* Стекло (liquid-glass) — как в продукте: полупрозрачный белый + blur + кант + блик. */
+    --glass-bg: rgba(255,255,255,.55);
+    --glass-brd: rgba(255,255,255,.7);
+    --glass-shadow: 0 10px 30px rgba(76,63,176,.12), inset 0 1px 0 rgba(255,255,255,.9);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,12 +50,21 @@
   .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
   .lenis.lenis-stopped { overflow: hidden; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     color: var(--ink);
-    background: var(--white);
+    background: #faf9ff;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+  }
+  /* Фон-подложка — ЕЛЕ заметные фиолетовые пятна (как canvas в кабинете): даёт
+     контраст, чтобы liquid-glass читался. Фиксированный слой, opacity низкая. */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(680px 460px at 12% 8%, rgba(135,129,198,.16), transparent 60%),
+      radial-gradient(720px 520px at 88% 22%, rgba(139,92,246,.13), transparent 62%),
+      radial-gradient(760px 540px at 50% 100%, rgba(167,139,250,.12), transparent 60%);
   }
   a { text-decoration: none; color: inherit; }
   .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
@@ -58,10 +79,10 @@
   }
   .btn-primary {
     background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
-    color: #fff; box-shadow: 0 10px 24px rgba(37,117,230,.34);
+    color: #fff; box-shadow: 0 10px 24px rgba(135,129,198,.34);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(37,117,230,.42); }
-  .btn-ghost { background: rgba(255,255,255,.10); color: #e6eef9; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(135,129,198,.42); }
+  .btn-ghost { background: rgba(255,255,255,.10); color: #e9e3f6; }
   .btn-ghost:hover { background: rgba(255,255,255,.18); color: #fff; }
   .btn-white { background: #fff; color: var(--blue-700); }
   .btn-white:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
@@ -69,26 +90,57 @@
   /* ---------- Header ---------- */
   header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(10,37,64,.82);
+    background: rgba(30,27,51,.82);
     backdrop-filter: saturate(180%) blur(14px);
-    border-bottom: 1px solid rgba(143,188,247,.14);
+    border-bottom: 1px solid rgba(196,181,253,.14);
   }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-  .logo { display: flex; align-items: center; gap: 10px; font-family: 'Unbounded', 'Manrope', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -.06em; color: #fff; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: 'Unbounded', 'Golos Text', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -.06em; color: #fff; }
   .logo b { font-weight: 700; }
   .logo-mark {
     width: 44px; height: 44px; border-radius: 13px;
     background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
-    display: grid; place-items: center; box-shadow: 0 6px 16px rgba(37,117,230,.36);
+    display: grid; place-items: center; box-shadow: 0 6px 16px rgba(135,129,198,.36);
   }
   .logo-mark svg { width: 44px; height: 44px; }
-  .logo b { color: #4f93f0; }
-  .nav-links { display: flex; gap: 34px; align-items: center; }
-  .nav-links a { font-size: 15px; font-weight: 500; color: #b8c7da; transition: color .2s; }
+  .logo b { color: #938dcb; }
+  /* Пункты не переносятся на 2 строки (nowrap), «Цены» не липнут к «Войти»
+     (запас у .nav-cta); на средних ширинах меню ужимается, а не ломается. */
+  /* Шапке нужен свой, более широкий контейнер: 6 пунктов + CTA не помещаются в 1180. */
+  header .wrap { max-width: 1360px; }
+  .nav-links { display: flex; gap: 28px; align-items: center; flex: none; }
+  .nav-links a { font-size: 14.5px; font-weight: 500; color: #bdb4d8; transition: color .2s; white-space: nowrap; }
   .nav-links a:hover { color: #fff; }
-  .nav-cta { display: flex; gap: 12px; align-items: center; }
-  .nav-cta .btn { padding: 11px 20px; font-size: 15px; }
-  @media (max-width: 900px){ .nav-links { display: none; } }
+  .nav-cta { display: flex; gap: 12px; align-items: center; margin-left: 28px; flex: none; }
+  .nav-cta .btn { padding: 11px 20px; font-size: 15px; white-space: nowrap; }
+  @media (max-width: 1240px){ .nav-links { gap: 18px; } .nav-links a { font-size: 13.5px; } .nav-cta { margin-left: 18px; } }
+  @media (max-width: 1080px){ .nav-links { gap: 13px; } }
+  @media (max-width: 1000px){ .nav-links { display: none; } .nav-cta { margin-left: 0; } }
+
+  /* ---------- Мобильное меню (бургер слева) ---------- */
+  .burger {
+    display: none; width: 42px; height: 42px; flex: 0 0 auto;
+    border-radius: 11px; border: 1px solid rgba(196,181,253,.25);
+    background: rgba(255,255,255,.06); cursor: pointer; padding: 0;
+    flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  }
+  .burger span { display: block; width: 20px; height: 2px; border-radius: 2px; background: #e4def4; transition: transform .25s, opacity .2s; }
+  .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  @media (max-width: 900px){ .burger { display: flex; } }
+  .mobile-menu {
+    display: none; position: fixed; top: 72px; left: 0; right: 0; z-index: 49;
+    background: rgba(30,27,51,.97); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(196,181,253,.18);
+    padding: 10px 18px 18px;
+  }
+  .mobile-menu.open { display: block; animation: mmDrop .22s ease-out; }
+  @keyframes mmDrop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  .mobile-menu a { display: block; padding: 13px 10px; font-size: 16px; font-weight: 600; color: #e4def4; border-bottom: 1px solid rgba(196,181,253,.12); }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu .mm-cta { margin-top: 12px; display: flex; gap: 10px; }
+  .mobile-menu .mm-cta .btn { flex: 1; justify-content: center; text-align: center; }
 
   /* ---------- Hero ---------- */
   .hero {
@@ -126,8 +178,10 @@
 
   /* Premium background: реальные документы заявки плавают в 3D — ярко, «дорого-богато» */
   .hero-forms-bg {
-    position: absolute;
+    position: fixed;      /* фон с летающими анкетами закреплён на весь экран — текст скроллится поверх */
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: 0;
     pointer-events: none;
     perspective: 1300px;
@@ -141,11 +195,11 @@
     height: clamp(140px, 13.5vw, 196px);
     border-radius: 16px;
     padding: 14px 13px 12px;
-    --accent: #2575e6;
+    --accent: #8781c6;
     background: linear-gradient(180deg, #ffffff 0%, #f3f9ff 100%);
-    border: 1px solid rgba(37,117,230,.16);
+    border: 1px solid rgba(135,129,198,.16);
     box-shadow:
-      0 30px 60px -20px rgba(16,58,102,.45),
+      0 30px 60px -20px rgba(76,63,176,.45),
       0 10px 24px -12px rgba(28,100,196,.32),
       inset 0 1px 0 rgba(255,255,255,.9);
     backdrop-filter: blur(3px);
@@ -173,7 +227,7 @@
     font-size: clamp(9px, .92vw, 11px);
     line-height: 1.2;
     letter-spacing: .005em;
-    color: #0a2540;
+    color: #2b2833;
     margin-bottom: 12px;
     min-height: 2.4em;
   }
@@ -184,7 +238,7 @@
     height: 6px;
     border-radius: 999px;
     margin-bottom: 9px;
-    background: linear-gradient(90deg, rgba(37,117,230,.30), rgba(37,117,230,.12));
+    background: linear-gradient(90deg, rgba(135,129,198,.30), rgba(135,129,198,.12));
   }
   .bg-form b { width: 90%; }
   .bg-form i { width: 66%; }
@@ -215,14 +269,14 @@
   /* Старт-позиции распределены по всему фону (не по углам). Карточки плавно дрейфуют
      в РАЗНЫХ направлениях (4 траектории roamA–roamD), разная длительность/задержка —
      движение выглядит случайным и не синхронным. Ярче — спереди, тусклее — в глубине. */
-  .bg-form.f1 { top: 12%; left: 6%;   --accent:#2575e6; --dur: 26s; --delay: -2s;  opacity: .8;  animation-name: roamA; }
-  .bg-form.f2 { top: 7%;  left: 39%;  --accent:#4f93f0; --dur: 31s; --delay: -12s; opacity: .58; animation-name: roamB; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
-  .bg-form.f3 { top: 11%; right: 8%;  --accent:#0ea5b7; --dur: 28s; --delay: -7s;  opacity: .9;  animation-name: roamC; }
-  .bg-form.f4 { top: 42%; left: 3%;   --accent:#1b5fc4; --dur: 33s; --delay: -19s; opacity: .82; animation-name: roamD; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
-  .bg-form.f5 { top: 46%; right: 14%; --accent:#6366f1; --dur: 29s; --delay: -5s;  opacity: .68; animation-name: roamA; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
-  .bg-form.f6 { bottom: 9%; left: 24%; --accent:#2563eb; --dur: 34s; --delay: -15s; opacity: .6;  animation-name: roamB; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
-  .bg-form.f7 { bottom: 13%; right: 6%; --accent:#0284c7; --dur: 27s; --delay: -10s; opacity: .88; animation-name: roamC; }
-  .bg-form.f8 { top: 30%; left: 31%;  --accent:#7c3aed; --dur: 36s; --delay: -23s; opacity: .44; animation-name: roamD; width: clamp(92px,9vw,120px); height: clamp(114px,11vw,150px); }
+  .bg-form.f1 { top: 12%; left: 6%;   --accent:#8781c6; --dur: 26s; --delay: -2s;  opacity: .8;  animation-name: roamA; }
+  .bg-form.f2 { top: 7%;  left: 39%;  --accent:#938dcb; --dur: 31s; --delay: -12s; opacity: .58; animation-name: roamB; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
+  .bg-form.f3 { top: 11%; right: 8%;  --accent:#938dcb; --dur: 28s; --delay: -7s;  opacity: .9;  animation-name: roamC; }
+  .bg-form.f4 { top: 42%; left: 3%;   --accent:#7a73bd; --dur: 33s; --delay: -19s; opacity: .82; animation-name: roamD; width: clamp(104px,10vw,138px); height: clamp(128px,12vw,172px); }
+  .bg-form.f5 { top: 46%; right: 14%; --accent:#938dcb; --dur: 29s; --delay: -5s;  opacity: .68; animation-name: roamA; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
+  .bg-form.f6 { bottom: 9%; left: 24%; --accent:#8781c6; --dur: 34s; --delay: -15s; opacity: .6;  animation-name: roamB; width: clamp(98px,9.5vw,128px); height: clamp(120px,11.5vw,160px); }
+  .bg-form.f7 { bottom: 13%; right: 6%; --accent:#7a73bd; --dur: 27s; --delay: -10s; opacity: .88; animation-name: roamC; }
+  .bg-form.f8 { top: 30%; left: 31%;  --accent:#8781c6; --dur: 36s; --delay: -23s; opacity: .44; animation-name: roamD; width: clamp(92px,9vw,120px); height: clamp(114px,11vw,150px); }
   /* Четыре траектории плавного дрейфа в разных направлениях (без рывков, ease-in-out). */
   @keyframes roamA {
     0%, 100% { transform: translate3d(0, 0, 0) rotateX(10deg) rotateY(-11deg) rotateZ(-3deg); }
@@ -263,17 +317,17 @@
   .sheet {
     background: linear-gradient(180deg, #ffffff, #fbfdff);
     border: 1px solid rgba(255,255,255,.85); border-radius: 18px;
-    box-shadow: 0 36px 72px -28px rgba(10,37,64,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(143,188,247,.20);
+    box-shadow: 0 36px 72px -28px rgba(30,27,51,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(196,181,253,.20);
     padding: 36px 30px 30px; position: relative;
     transform: translateY(0) rotate(3deg) rotateY(-5deg) rotateX(1.5deg); transform-style: preserve-3d;
     animation: floaty 7s ease-in-out infinite;
     transition: transform .35s ease, box-shadow .35s ease;
   }
   .sheet:hover {
-    box-shadow: 0 42px 86px -28px rgba(10,37,64,.40), 0 18px 38px -18px rgba(28,100,196,.28), 0 0 0 1px rgba(143,188,247,.30);
+    box-shadow: 0 42px 86px -28px rgba(30,27,51,.40), 0 18px 38px -18px rgba(28,100,196,.28), 0 0 0 1px rgba(196,181,253,.30);
   }
   @keyframes floaty { 0%,100%{ transform: translateY(0) rotate(3deg) rotateY(-5deg) rotateX(1.5deg);} 50%{ transform: translateY(-12px) rotate(3deg) rotateY(-5deg) rotateX(1.5deg);} }
-  @media (max-width: 960px){ .sheet { transform: none; animation: none; border-radius: 16px; padding: 24px 20px 20px; box-shadow: 0 24px 48px -22px rgba(10,37,64,.3), 0 0 0 1px rgba(143,188,247,.2); } }
+  @media (max-width: 960px){ .sheet { transform: none; animation: none; border-radius: 16px; padding: 24px 20px 20px; box-shadow: 0 24px 48px -22px rgba(30,27,51,.3), 0 0 0 1px rgba(196,181,253,.2); } }
   @media (prefers-reduced-motion: reduce){ .sheet { animation: none; } }
   .sheet::before { content:""; position:absolute; top:0; left:0; right:0; height:6px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, var(--blue-500), var(--blue-800)); }
   .sheet-clip { position:absolute; top:-13px; left:50%; transform: translateX(-50%); width: 86px; height: 22px; background: var(--blue-100); border: 1px solid var(--blue-300); border-radius: 7px; box-shadow: var(--shadow-sm); }
@@ -304,12 +358,12 @@
   .td-widget {
     --bg-primary:#ffffff; --bg-secondary:#f4f6f8; --border-soft:#e5e7eb; --border-mid:#d1d5db;
     --text-primary:#1a1d21; --text-secondary:#6b7280; --text-tertiary:#9ca3af;
-    --accent:#2575e6; --accent-bg:#eef5fe; --warn:#b45309; --warn-bg:#fef3c7; --success:#16a34a;
-    width:100%; max-width:100%; font-family:'Inter',-apple-system,sans-serif; text-align:left;
+    --accent:#8781c6; --accent-bg:#eef5fe; --warn:#b45309; --warn-bg:#fef3c7; --success:#16a34a;
+    width:100%; max-width:100%; font-family:'Golos Text',-apple-system,sans-serif; text-align:left;
   }
   .td-card {
-    background:var(--bg-primary); border:1px solid rgba(143,188,247,.25); border-radius:16px; overflow:hidden;
-    box-shadow: 0 36px 72px -28px rgba(10,37,64,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(143,188,247,.20);
+    background:var(--bg-primary); border:1px solid rgba(196,181,253,.25); border-radius:16px; overflow:hidden;
+    box-shadow: 0 36px 72px -28px rgba(30,27,51,.34), 0 14px 30px -16px rgba(28,100,196,.20), 0 0 0 1px rgba(196,181,253,.20);
     transform: rotate(3deg) rotateY(-5deg) rotateX(1.5deg); transform-style: preserve-3d;
     animation: floaty 7s ease-in-out infinite;
   }
@@ -344,6 +398,21 @@
   .td-report-title { margin:0; font-size:13.5px; font-weight:600; color:var(--accent); }
   .td-report-sub { margin:2px 0 0; font-size:11.5px; color:var(--text-secondary); }
   .td-report-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 13px; font-size:12.5px; font-weight:500; cursor:pointer; white-space:nowrap; }
+  /* Демо-отчёт в стиле кабинета: вердикт + рейтинг-кольцо + метрики + проверки */
+  .td-rephead { display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(120deg,#ecfdf5,#f6f7fb); border:1px solid #bbf7d0; border-radius:12px; padding:12px 14px; }
+  .td-vbadge { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#16a34a; }
+  .td-vbadge::before { content:""; width:7px; height:7px; border-radius:50%; background:#16a34a; }
+  .td-vtitle { margin:6px 0 2px; font-size:13.5px; font-weight:700; color:var(--text-primary); line-height:1.25; }
+  .td-vsub { margin:0; font-size:11.5px; color:var(--text-secondary); }
+  .td-ring { flex:0 0 auto; width:70px; height:70px; }
+  .td-ring svg { width:100%; height:100%; }
+  .td-repmetrics { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tdm { background:var(--bg-secondary); border-radius:10px; padding:8px 10px; }
+  .tdm span { display:block; font-size:10px; color:var(--text-tertiary); }
+  .tdm b { font-size:12.5px; color:var(--text-primary); font-weight:700; }
+  .td-repchecks { display:flex; flex-direction:column; gap:6px; }
+  .td-repcheck { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary); }
+  .td-repcheck .tick { width:16px; height:16px; border-radius:50%; background:#dcfce7; color:#16a34a; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:10px; font-weight:800; }
   @keyframes td-rot { to { transform:rotate(360deg); } }
   @media (max-width: 960px){ .td-card { transform:none; animation:none; } }
   @media (prefers-reduced-motion: reduce){ .td-card { animation:none; } }
@@ -362,7 +431,7 @@
     padding: 9px 18px; border-radius: 999px; white-space: nowrap;
     margin-bottom: clamp(22px, 3vw, 30px);
   }
-  .pill .dot { background: var(--blue-500) !important; box-shadow: 0 0 0 4px rgba(37,117,230,.18) !important; }
+  .pill .dot { background: var(--blue-500) !important; box-shadow: 0 0 0 4px rgba(135,129,198,.18) !important; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.28); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 4px rgba(255,255,255,.28);} 50%{ box-shadow: 0 0 0 7px rgba(255,255,255,.12);} }
   .hero h1 {
@@ -381,7 +450,7 @@
     text-align: justify; text-justify: inter-word; hyphens: none; overflow-wrap: normal; word-break: normal;
   }
   .hero p.lead b { color: var(--blue-700); font-weight: 700; }
-  .brand-word { font-family: 'Unbounded', 'Manrope', sans-serif; font-weight: 700; letter-spacing: -.03em; }
+  .brand-word { font-family: 'Unbounded', 'Golos Text', sans-serif; font-weight: 700; letter-spacing: -.03em; }
 
   .hero-free { display:inline-flex; align-items:center; gap:9px; margin: 16px 0 2px; padding: 9px 16px; border-radius: 999px;
     background: var(--blue-50); color: var(--blue-700); font-size: clamp(13px,1.5vw,15px); font-weight: 600; border: 1px solid var(--blue-100); }
@@ -398,7 +467,7 @@
   .linkbox:hover {
     transform: translateY(-2px);
     border-color: var(--blue-300);
-    box-shadow: 0 34px 84px rgba(16,58,102,.18);
+    box-shadow: 0 34px 84px rgba(76,63,176,.18);
   }
   .linkbox .field { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 16px; }
   .linkbox .field svg { width: 22px; height: 22px; color: var(--blue-400); flex-shrink: 0; }
@@ -430,24 +499,25 @@
     background: linear-gradient(135deg, var(--blue-700), var(--blue-900));
     color: #fff; padding: 46px 0; position: relative; overflow: hidden;
   }
-  .counter-band::after { content:""; position:absolute; inset:0; background: radial-gradient(700px 320px at 85% 0%, rgba(79,147,240,.35), transparent 60%); }
+  .counter-band::after { content:""; position:absolute; inset:0; background: radial-gradient(700px 320px at 85% 0%, rgba(167,139,250,.4), transparent 60%); }
   .counter-inner { position: relative; text-align: center; }
-  .counter-live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #bcd4f5; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .counter-live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #cdc4ef; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
   .counter-live .ld { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 0 rgba(74,222,128,.7); animation: livepulse 1.6s infinite; }
   @keyframes livepulse { 0%{ box-shadow: 0 0 0 0 rgba(74,222,128,.7);} 70%{ box-shadow: 0 0 0 9px rgba(74,222,128,0);} 100%{ box-shadow: 0 0 0 0 rgba(74,222,128,0);} }
   .counter-num {
-    font-size: clamp(46px, 9vw, 92px); font-weight: 900; letter-spacing: -.03em; line-height: 1;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(46px, 9vw, 92px); font-weight: 700; letter-spacing: -.03em; line-height: 1;
     font-variant-numeric: tabular-nums; display: inline-flex; gap: 2px;
   }
   .counter-num .digit { display: inline-block; transition: transform .3s; }
   .counter-num .bump { animation: bump .4s ease; }
-  @keyframes bump { 0%{ transform: translateY(0); color:#fff;} 30%{ transform: translateY(-8px); color:#9be7ff;} 100%{ transform: translateY(0); color:#fff;} }
-  .counter-label { font-size: clamp(16px, 2vw, 20px); color: #cfe0f5; margin-top: 16px; }
-  .counter-sub { font-size: 13.5px; color: #9bb6dd; margin-top: 6px; }
+  @keyframes bump { 0%{ transform: translateY(0); color:#fff;} 30%{ transform: translateY(-8px); color:#d7ccff;} 100%{ transform: translateY(0); color:#fff;} }
+  .counter-label { font-size: clamp(16px, 2vw, 20px); color: #d5cef0; margin-top: 16px; }
+  .counter-sub { font-size: 13.5px; color: #a79fc9; margin-top: 6px; }
 
   /* ---------- Section heading ---------- */
-  .sec { padding: 84px 0; }
-  .sec-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+  .sec { padding: 56px 0; }
+  .sec-head { text-align: center; max-width: 720px; margin: 0 auto 38px; }
   .eyebrow { color: var(--blue-600); font-weight: 700; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
   .sec-head h2 { font-size: clamp(28px, 4vw, 42px); letter-spacing: -.025em; font-weight: 800; line-height: 1.12; margin-bottom: 16px; }
   .sec-head p { color: var(--muted); font-size: 18px; }
@@ -457,8 +527,9 @@
   @media (max-width: 920px){ .steps { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 540px){ .steps { grid-template-columns: 1fr; } }
   .step {
-    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 28px 24px; box-shadow: var(--shadow-sm); transition: .25s ease; position: relative;
+    background: var(--glass-bg); backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    border: 1px solid var(--glass-brd); border-radius: var(--radius);
+    padding: 28px 24px; box-shadow: var(--glass-shadow); transition: .25s ease; position: relative;
   }
   .step:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--blue-300); }
   .step .num { font-size: 13px; font-weight: 700; color: var(--blue-400); margin-bottom: 16px; }
@@ -475,16 +546,16 @@
   .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 920px){ .feat-grid { grid-template-columns: 1fr; } }
   .feat {
-    border-radius: var(--radius); padding: 30px; border: 1px solid var(--line);
-    background: linear-gradient(180deg, #fff, var(--blue-50));
-    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius); padding: 30px; border: 1px solid var(--glass-brd);
+    background: var(--glass-bg); backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    box-shadow: var(--glass-shadow);
     transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease, background .28s ease;
   }
   .feat:hover {
     transform: translateY(-5px);
     border-color: var(--blue-300);
     box-shadow: var(--shadow-md);
-    background: linear-gradient(180deg, #fff, #eef6ff);
+    background: rgba(255,255,255,.68);
   }
   .feat .ic { width: 48px; height: 48px; border-radius: 13px; background: var(--blue-600); display: grid; place-items: center; margin-bottom: 18px; box-shadow: 0 8px 18px rgba(28,100,196,.32); }
   .feat .ic svg { width: 24px; height: 24px; color: #fff; }
@@ -498,9 +569,9 @@
   .cab-copy { padding: 56px 48px; }
   .cab-copy .eyebrow { color: var(--blue-300); }
   .cab-copy h2 { font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -.02em; margin-bottom: 16px; line-height: 1.14; }
-  .cab-copy p { color: #b9cce6; font-size: 17px; margin-bottom: 26px; }
+  .cab-copy p { color: #c8bfe8; font-size: 17px; margin-bottom: 26px; }
   .cab-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-  .cab-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; color: #d6e3f5; }
+  .cab-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; color: #ddd6f2; }
   .cab-list .tick { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-500); display: grid; place-items: center; flex-shrink: 0; margin-top: 2px; }
   .cab-list .tick svg { width: 13px; height: 13px; color: #fff; }
 
@@ -511,7 +582,7 @@
   .win-bar .url { margin-left: 12px; font-size: 12px; color: var(--muted); background: var(--blue-50); padding: 5px 12px; border-radius: 7px; border: 1px solid var(--line); }
   .win-body { padding: 20px; }
   .win-head { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  .win-paste { display: flex; gap: 8px; background: #fff; border: 1.5px solid var(--blue-300); border-radius: 11px; padding: 10px 12px; align-items: center; box-shadow: 0 0 0 4px rgba(37,117,230,.1); }
+  .win-paste { display: flex; gap: 8px; background: #fff; border: 1.5px solid var(--blue-300); border-radius: 11px; padding: 10px 12px; align-items: center; box-shadow: 0 0 0 4px rgba(135,129,198,.1); }
   .win-paste svg { width: 18px; height: 18px; color: var(--blue-400); }
   .win-paste span { font-size: 13px; color: var(--ink); flex: 1; }
   .win-paste b { font-size: 12px; background: var(--blue-600); color: #fff; padding: 6px 12px; border-radius: 8px; }
@@ -534,24 +605,25 @@
   .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
   @media (max-width: 920px){ .price-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; } }
   .plan {
-    background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 34px 30px;
-    box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: .25s ease; position: relative;
+    background: var(--glass-bg); backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    border: 1px solid var(--glass-brd); border-radius: 22px; padding: 34px 30px;
+    box-shadow: var(--glass-shadow); display: flex; flex-direction: column; transition: .25s ease; position: relative;
   }
   .plan:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--blue-300); }
   .plan.popular {
-    border: 1.5px solid var(--blue-500); box-shadow: var(--shadow-lg);
-    background: linear-gradient(180deg, #fff, var(--blue-50));
+    border: 1.5px solid var(--blue-500); box-shadow: var(--shadow-lg), 0 0 0 4px rgba(135,129,198,.10);
+    background: rgba(255,255,255,.66);
   }
   .plan .tag-pop {
     position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
     background: linear-gradient(135deg, var(--blue-500), var(--blue-700)); color: #fff;
-    font-size: 12.5px; font-weight: 700; padding: 6px 16px; border-radius: 999px; box-shadow: 0 8px 18px rgba(37,117,230,.4);
+    font-size: 12.5px; font-weight: 700; padding: 6px 16px; border-radius: 999px; box-shadow: 0 8px 18px rgba(135,129,198,.4);
     white-space: nowrap;
   }
   .plan .pname { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
   .plan .pdesc { font-size: 14px; color: var(--muted); margin-bottom: 22px; min-height: 40px; }
   .plan .pprice { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
-  .plan .pprice b { font-size: 42px; letter-spacing: -.03em; font-weight: 800; color: var(--ink); }
+  .plan .pprice b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 40px; letter-spacing: -.03em; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
   .plan .pprice .cur { font-size: 22px; font-weight: 700; color: var(--ink); }
   .plan .pprice .per { font-size: 14.5px; color: var(--muted); }
   .plan .pquota { font-size: 14px; color: var(--blue-700); font-weight: 600; background: var(--blue-100); display: inline-block; padding: 5px 12px; border-radius: 8px; margin-bottom: 22px; align-self: flex-start; }
@@ -566,13 +638,82 @@
   .cta { background: linear-gradient(135deg, var(--blue-600), var(--blue-900)); border-radius: 28px; padding: 64px 40px; text-align: center; color: #fff; position: relative; overflow: hidden; }
   .cta::after { content:""; position:absolute; inset:0; background: radial-gradient(600px 300px at 80% 0%, rgba(255,255,255,.16), transparent 60%); }
   .cta h2 { font-size: clamp(28px, 4vw, 42px); letter-spacing: -.025em; margin-bottom: 16px; position: relative; }
-  .cta p { font-size: 18px; color: #cfe0f5; max-width: 560px; margin: 0 auto 30px; position: relative; }
+  .cta p { font-size: 18px; color: #d5cef0; max-width: 560px; margin: 0 auto 30px; position: relative; }
   .cta .btn { position: relative; }
 
   /* ---------- Footer ---------- */
-  footer { padding: 56px 0 40px; border-top: 1px solid var(--line); margin-top: 84px; }
+  footer { padding: 48px 0 36px; border-top: 1px solid var(--line); margin-top: 52px; }
   .foot { display: flex; justify-content: space-between; gap: 30px; flex-wrap: wrap; }
-  .foot .logo { font-size: 19px; }
+  .foot .logo { font-size: 19px; color: var(--ink); }  /* футер светлый → лого тёмное (в шапке остаётся белым) */
+
+  /* ---------- Модалка входа (всплывающая форма) ---------- */
+  .lm-overlay {
+    position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(20,16,42,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    animation: lmFade .2s ease;
+  }
+  .lm-overlay[hidden] { display: none; }
+  @keyframes lmFade { from { opacity: 0; } to { opacity: 1; } }
+  .lm-card {
+    position: relative; width: 100%; max-width: 420px;
+    background: rgba(255,255,255,.9); backdrop-filter: blur(18px) saturate(120%); -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid rgba(255,255,255,.8); border-radius: 22px; padding: 34px 32px 30px;
+    box-shadow: 0 40px 90px -30px rgba(30,27,51,.6), inset 0 1px 0 rgba(255,255,255,.9);
+    animation: lmPop .28s cubic-bezier(.2,1.5,.4,1);
+  }
+  @keyframes lmPop { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  .lm-close {
+    position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border: none; cursor: pointer;
+    border-radius: 10px; background: transparent; color: var(--muted); font-size: 24px; line-height: 1;
+    display: grid; place-items: center; transition: .18s;
+  }
+  .lm-close:hover { background: #f1eefb; color: var(--ink); }
+  .lm-mark { width: 46px; height: 46px; border-radius: 13px; background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
+    display: grid; place-items: center; box-shadow: 0 8px 20px rgba(135,129,198,.4); margin-bottom: 16px; }
+  .lm-mark svg { width: 46px; height: 46px; }
+  .lm-title { font-family: 'Unbounded','Golos Text',sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+  .lm-sub { color: var(--muted); font-size: 14.5px; margin-top: 4px; margin-bottom: 22px; }
+  .lm-lbl { display: block; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 6px; }
+  .lm-input {
+    width: 100%; height: 46px; border: 1.5px solid var(--line); border-radius: 12px; padding: 0 14px;
+    font-family: inherit; font-size: 15px; color: var(--ink); background: #fff; outline: none; transition: border-color .18s, box-shadow .18s;
+  }
+  .lm-input:focus { border-color: var(--blue-400); box-shadow: 0 0 0 4px rgba(135,129,198,.14); }
+  .lm-field { margin-bottom: 16px; }
+  .lm-passwrap { position: relative; }
+  .lm-passwrap .lm-input { padding-right: 44px; }
+  .lm-eye { position: absolute; inset: 0 0 0 auto; width: 44px; border: none; background: transparent; cursor: pointer; color: #a99fca; display: grid; place-items: center; }
+  .lm-eye:hover { color: var(--blue-600); }
+  .lm-eye svg { width: 19px; height: 19px; }
+  .lm-remember { margin: -2px 0 16px; }
+  .lm-check { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; color: var(--ink); user-select: none; }
+  .lm-check input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border: 1.5px solid var(--blue-300); border-radius: 6px; background: #fff; cursor: pointer; position: relative; flex-shrink: 0; transition: .15s; }
+  .lm-check input:checked { background: var(--blue-500); border-color: var(--blue-500); }
+  .lm-check input:checked::after { content: ""; position: absolute; left: 6.5px; top: 3px; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .lm-check input:focus-visible { box-shadow: 0 0 0 4px rgba(135,129,198,.2); }
+  .lm-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 13.5px; line-height: 1.45; border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; }
+  .lm-error[hidden] { display: none; }
+  .lm-submit { width: 100%; height: 48px; font-size: 16px; margin-top: 2px; }
+  .lm-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .lm-alt { text-align: center; font-size: 14px; color: var(--muted); margin-top: 18px; }
+  .lm-alt a { color: var(--blue-600); font-weight: 600; }
+  .lm-alt a:hover { text-decoration: underline; }
+  /* Регистрация — та же модалка, форма выше (скролл), доп. элементы */
+  .lm-card.lm-reg { max-width: 460px; max-height: calc(100vh - 40px); overflow-y: auto; }
+  .lm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 430px){ .lm-row { grid-template-columns: 1fr; } }
+  .lm-hint { font-size: 12px; margin-top: 5px; min-height: 15px; }
+  .lm-hint.loading { color: var(--muted); } .lm-hint.found { color: #059669; font-weight: 600; } .lm-hint.notfound { color: #d97706; }
+  .lm-passhint { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+  .lm-passhint.bad { color: #dc2626; }
+  .lm-consent { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 16px; }
+  .lm-consent label { display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; line-height: 1.45; color: var(--muted); cursor: pointer; }
+  .lm-consent input { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1.5px solid var(--blue-300); border-radius: 5px; background: #fff; cursor: pointer; position: relative; flex-shrink: 0; margin-top: 1px; transition: .15s; }
+  .lm-consent input:checked { background: var(--blue-500); border-color: var(--blue-500); }
+  .lm-consent input:checked::after { content: ""; position: absolute; left: 5.4px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .lm-consent a { color: var(--blue-600); font-weight: 600; }
+  .lm-success p { font-size: 14.5px; color: var(--muted); line-height: 1.55; margin: 8px 0 14px; }
+  .lm-success .lm-mail { color: var(--ink); font-weight: 600; }
   .foot p { color: var(--muted); font-size: 14px; max-width: 320px; margin-top: 14px; }
   .foot-cols { display: flex; gap: 64px; flex-wrap: wrap; }
   .foot-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); margin-bottom: 14px; }
@@ -583,6 +724,136 @@
 
   .reveal { opacity: 0; transform: translateY(22px); transition: .7s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Сравнение «Вручную vs Тендер-ИИ» ---------- */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 940px; margin: 0 auto; }
+  @media (max-width: 760px){ .compare-grid { grid-template-columns: 1fr; } }
+  .cmp {
+    border-radius: var(--radius); padding: 30px 28px; border: 1px solid var(--glass-brd);
+    background: var(--glass-bg); backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    box-shadow: var(--glass-shadow);
+  }
+  .cmp.ai { border: 1.5px solid var(--blue-300); background: rgba(230,227,240,.5); }
+  .cmp h3 { font-size: 18px; font-weight: 800; margin-bottom: 3px; display: flex; align-items: center; gap: 9px; letter-spacing: -.01em; }
+  .cmp .cmp-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .cmp ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .cmp li { display: flex; gap: 11px; align-items: flex-start; font-size: 14.5px; line-height: 1.42; }
+  .cmp li .mk { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-size: 13px; font-weight: 800; margin-top: 1px; }
+  .cmp.manual .mk { background: #fee2e2; color: #dc2626; }
+  .cmp.manual li { color: var(--muted); }
+  .cmp.ai .mk { background: #dcd9ea; color: var(--blue-600); }
+
+  /* ---------- FAQ (нативные details, без JS) ---------- */
+  .faq-list { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  .faq-item {
+    border: 1px solid var(--glass-brd); background: var(--glass-bg);
+    backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    border-radius: 14px; box-shadow: var(--glass-shadow); overflow: hidden;
+  }
+  .faq-item summary { list-style: none; cursor: pointer; padding: 18px 22px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--ink); }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: "+"; font-size: 24px; line-height: 1; color: var(--blue-600); font-weight: 300; transition: transform .25s ease; flex-shrink: 0; }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item .faq-a { padding: 0 22px 20px; color: var(--muted); font-size: 15px; line-height: 1.58; }
+
+  /* ---------- «Как выглядит отчёт» — демо-карточка вердикта ---------- */
+  .report-wrap { max-width: 1040px; margin: 0 auto; }
+  .rep-card {
+    border-radius: 20px; border: 1px solid var(--glass-brd); background: rgba(255,255,255,.62);
+    backdrop-filter: blur(12px) saturate(110%); -webkit-backdrop-filter: blur(12px) saturate(110%);
+    box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .rep-top { padding: 18px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .rep-reg { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; color: var(--muted); }
+  .rep-title { font-weight: 700; font-size: 15.5px; margin-top: 2px; letter-spacing: -.01em; }
+  .rep-verdict { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 7px 14px; border-radius: 999px; white-space: nowrap; }
+  .rep-verdict .dot { width: 9px; height: 9px; border-radius: 50%; background: #f59e0b; }
+  .rep-score { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+  .rep-body { padding: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 640px){ .rep-body { grid-template-columns: 1fr; } }
+  .rep-cell .rl { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 5px; }
+  .rep-cell .rv { font-size: 14px; color: var(--ink); line-height: 1.4; }
+  .rep-cell .rv b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+  .rep-risk { margin: 0 22px 22px; padding: 14px 16px; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa; display: flex; gap: 11px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; color: #7c2d12; }
+  .rep-risk .rk { flex-shrink: 0; font-size: 15px; }
+  .rep-cap { text-align: center; font-size: 12px; color: #a99fca; margin-top: 16px; }
+  /* Расширенная карточка отчёта: резюме, блоки, чипы, спидометр, риски */
+  .rep-summary { padding: 16px 22px 4px; font-size: 14px; line-height: 1.5; color: var(--ink); }
+  .rep-summary b { color: var(--blue-700); }
+  .rep-block { padding: 16px 22px; border-top: 1px solid var(--line); }
+  .rep-block > .rbl { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
+  .rep-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rep-chip { display: inline-flex; align-items: baseline; gap: 6px; font-size: 13px; background: rgba(230,227,240,.7); border: 1px solid var(--blue-100); border-radius: 9px; padding: 7px 11px; color: var(--ink); }
+  .rep-chip .ck { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .rep-chip b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+  .rep-nmc { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
+  .rep-nmc .lvl { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  /* спидометр надёжности */
+  .rep-rely { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .gauge { --v: 70; --gc: #f59e0b; width: 84px; height: 84px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--gc) calc(var(--v) * 1%), #ece8fa 0); display: grid; place-items: center; position: relative; }
+  .gauge::before { content: ""; position: absolute; inset: 9px; background: #fff; border-radius: 50%; box-shadow: inset 0 1px 3px rgba(30,27,51,.12); }
+  .gauge .gv { position: relative; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 21px; color: var(--ink); line-height: 1; }
+  .gauge .gm { position: relative; font-size: 9px; color: var(--muted); }
+  .rely-facts { flex: 1; min-width: 220px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; }
+  @media (max-width: 480px){ .rely-facts { grid-template-columns: 1fr; } }
+  .rely-facts div { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+  .rely-facts div b { color: var(--ink); font-weight: 600; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  /* блок рисков «обратите внимание» */
+  .rep-flags { display: flex; flex-direction: column; gap: 11px; }
+  .rep-flag { display: flex; gap: 11px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; }
+  .rep-flag .fdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .rep-flag.red .fdot { background: #ef4444; } .rep-flag.amber .fdot { background: #f59e0b; } .rep-flag.green .fdot { background: #22c55e; }
+  .rep-flag .ft { color: var(--ink); } .rep-flag .ft b { font-weight: 700; } .rep-flag .fm { color: var(--muted); }
+  /* Блок надёжности 1:1 с кабинетом: спидометр (192px) + бейдж + сводка + факторы + сетка */
+  .rep-rely2 { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .rep-gauge { flex-shrink: 0; }
+  .rep-gauge svg { width: 192px; height: auto; display: block; }
+  .rep-rely-col { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px; }
+  .rep-relbadge { align-self: flex-start; font-size: 14px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 5px 13px; border-radius: 999px; }
+  .rep-assess { background: #f1eff6; border-radius: 10px; padding: 11px 14px; font-size: 14.5px; line-height: 1.5; color: #334155; font-weight: 500; }
+  .rep-factors .rfl { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 7px; }
+  .rep-factors ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .rep-factors li { display: flex; gap: 9px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.42; }
+  .rep-factors li b { color: var(--ink); font-weight: 600; }
+  .rep-factors .fd { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .rep-factors .fd.amber { background: #f59e0b; } .rep-factors .fd.red { background: #ef4444; } .rep-factors .fd.green { background: #22c55e; }
+  .rep-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (max-width: 560px){ .rep-metrics { grid-template-columns: repeat(2, 1fr); } }
+  .rm { background: #f8fafc; border: 1px solid #f1f0f7; border-radius: 9px; padding: 8px 11px; }
+  .rml { font-size: 11.5px; color: var(--muted); font-weight: 500; line-height: 1.3; }
+  .rmv { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+
+  /* ---------- 3D-светофор ЗСК (секция «Проверка контрагента») ---------- */
+  .tl3d {
+    position: relative; display: flex; flex-direction: column; gap: 9px;
+    padding: 10px 9px; border-radius: 14px;
+    background: linear-gradient(150deg, #232f52 0%, #101a35 55%, #0a1128 100%);
+    box-shadow: 0 10px 22px -8px rgba(6,12,30,.65), inset 0 1px 1px rgba(255,255,255,.22), inset 0 -3px 6px rgba(0,0,0,.5);
+  }
+  .tl3d::before { /* глянцевая кромка корпуса */
+    content: ""; position: absolute; inset: 2px; border-radius: 12px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.14), transparent 38%);
+  }
+  .tl3d .lamp { position: relative; width: 22px; height: 22px; border-radius: 50%; }
+  .tl3d .lamp::after { /* стеклянный блик на линзе */
+    content: ""; position: absolute; left: 19%; top: 12%; width: 42%; height: 30%; border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,.9), rgba(255,255,255,0) 70%);
+  }
+  .tl3d .lamp:not(.on)::after { opacity: .22; }
+  .tl3d .lamp.red { background: radial-gradient(circle at 35% 30%, #5c2530, #331119 72%); box-shadow: inset 0 2px 4px rgba(0,0,0,.7); }
+  .tl3d .lamp.red.on {
+    background: radial-gradient(circle at 35% 30%, #ffd7d1, #ef4444 45%, #b91c1c 85%);
+    box-shadow: 0 0 16px 5px rgba(239,68,68,.75), inset -2px -3px 6px rgba(120,10,10,.55);
+  }
+  .tl3d .lamp.green { background: radial-gradient(circle at 35% 30%, #1d4230, #0d2418 72%); box-shadow: inset 0 2px 4px rgba(0,0,0,.7); }
+  .tl3d .lamp.green.on {
+    background: radial-gradient(circle at 35% 30%, #d9ffe3, #22c55e 45%, #15803d 85%);
+    box-shadow: 0 0 16px 5px rgba(34,197,94,.8), inset -2px -3px 6px rgba(6,80,40,.55);
+    animation: tlGlow 2.6s ease-in-out infinite;
+  }
+  @keyframes tlGlow { 0%,100% { box-shadow: 0 0 14px 4px rgba(34,197,94,.7), inset -2px -3px 6px rgba(6,80,40,.55); } 50% { box-shadow: 0 0 20px 7px rgba(34,197,94,.95), inset -2px -3px 6px rgba(6,80,40,.55); } }
+  @media (prefers-reduced-motion: reduce){ .tl3d .lamp.green.on { animation: none; } }
 
   /* ---------- Font variant switcher (демо-сравнение) ---------- */
   .font-switch {
@@ -603,8 +874,8 @@
   /* ---------- Mobile refinements ---------- */
   @media (max-width: 768px){
     .wrap { padding: 0 18px; }
-    .sec { padding: 56px 0; }
-    .sec-head { margin-bottom: 38px; }
+    .sec { padding: 42px 0; }
+    .sec-head { margin-bottom: 28px; }
     .hero { padding: 48px 0 44px; }
     .hero h1 { white-space: normal; font-size: clamp(18px, 5.2vw, 23px); }
     .nav { height: 62px; }
@@ -626,31 +897,128 @@
     .counter-num { font-size: 44px; }
     .pill { font-size: 13px; padding: 10px 16px; white-space: normal; }
   }
+
+  /* ── Секция «Поиск закупок»: мини-демо строки с кнопкой «ИИ» (эхо кабинета) ── */
+  .search-demo { max-width: 760px; margin: 26px auto 0; }
+  .sd-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.7);
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,.8);
+    backdrop-filter: blur(10px) saturate(105%); -webkit-backdrop-filter: blur(10px) saturate(105%);
+    border-radius: 16px; padding: 12px 14px;
+  }
+  .sd-lens { width: 18px; height: 18px; color: var(--muted); flex: none; }
+  .sd-query {
+    flex: 1; min-width: 0; font-size: 15px; color: var(--ink); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    border-right: 2px solid var(--blue-500); padding-right: 4px; /* «курсор» набора */
+  }
+  .sd-ai, .sd-go {
+    flex: none; display: inline-flex; align-items: center; gap: 5px;
+    font-size: 13.5px; font-weight: 700; border-radius: 10px; padding: 8px 13px;
+  }
+  .sd-ai { color: var(--blue-600); background: var(--blue-50); border: 1px solid var(--blue-100); }
+  .sd-ai svg { width: 14px; height: 14px; }
+  .sd-go { color: #fff; background: linear-gradient(135deg, var(--blue-500), var(--blue-600)); box-shadow: 0 6px 16px rgba(109,93,232,.35); }
+  .sd-hint { margin: 10px 4px 0; font-size: 12.5px; color: var(--blue-700); opacity: .85; }
+  .sd-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 2px 0; }
+  .sd-chip {
+    font-size: 12.5px; font-weight: 600; color: var(--blue-700);
+    background: var(--blue-100); border: 1px solid var(--blue-300); border-radius: 999px; padding: 5px 12px;
+  }
+  .sd-chip-ex { color: #b42318; background: #fee4e2; border-color: #fecdca; }
+  /* Hero-виджет «поиск + предпросмотр» (эхо кабинета) */
+  .sp-widget { background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:var(--shadow-lg); }
+  .sp-cols { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+  .sp-list { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .sp-row { padding:9px 10px; }
+  .sp-row + .sp-row { border-top:1px solid rgba(135,129,198,.22); }
+  .sp-sel { background:#eeecf5; box-shadow:inset 3px 0 0 #8781c6; }
+  .sp-meta { display:flex; align-items:center; gap:6px; font-size:10px; flex-wrap:nowrap; }
+  .sp-law { background:#e6e3f0; color:#585379; font-weight:700; padding:1px 6px; border-radius:5px; white-space:nowrap; }
+  .sp-reg { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:9ch; }
+  .sp-sum { margin-left:auto; font-size:11px; color:var(--blue-900); white-space:nowrap; }
+  .sp-name { font-size:12px; font-weight:500; color:var(--blue-900); margin-top:3px; line-height:1.3; }
+  .sp-due { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:3px; }
+  .sp-due span { color:#585379; font-weight:700; }
+  .sp-prev { border:1px solid var(--line); border-radius:12px; padding:11px 12px; display:flex; flex-direction:column; gap:8px; }
+  .sp-ptitle { font-size:12px; font-weight:600; color:var(--blue-900); line-height:1.3; }
+  .sp-pprice { font-family:'Unbounded',sans-serif; font-weight:800; font-size:16px; color:var(--blue-900); }
+  .sp-block { font-size:10.5px; line-height:1.35; }
+  .sp-bl { display:block; text-transform:uppercase; letter-spacing:.04em; font-size:8.5px; color:var(--muted); }
+  .sp-block b { color:#585379; font-weight:600; }
+  .sp-cta { margin-top:auto; background:var(--blue-600); color:#fff; text-align:center; font-size:12px; font-weight:600; padding:8px 10px; border-radius:10px; }
+  @media (max-width: 520px) { .sp-cols { grid-template-columns:1fr; } }
+
+  @media (max-width: 640px) {
+    .sd-go { display: none; } /* на мобиле демо-строка не должна ломаться в 2 ряда */
+    .sd-query { font-size: 13.5px; }
+  }
 </style>
+<script>
+  /* При обновлении страницы уходить наверх, а не восстанавливать позицию прокрутки
+     (кроме открытия по ссылке-якорю #...). Ставим как можно раньше. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.addEventListener('load', function(){ if (!location.hash) window.scrollTo(0, 0); });
+</script>
 </head>
 <body>
 
 <!-- ============ HEADER ============ -->
 <header>
   <div class="wrap nav">
+    <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
     <a class="logo" href="#">
       <span class="logo-mark">
-        <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#1c64c4" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#9bbce6" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
+        <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#7a73bd" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#9bbce6" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
       </span>
       <span class="logo-text">Тендер<b>-ИИ</b></span>
     </a>
     <nav class="nav-links">
+      <a href="#search">Поиск закупок</a>
       <a href="#how">Как это работает</a>
       <a href="#why">Возможности</a>
+      <a href="#counterparty">Проверка контрагента</a>
       <a href="#cabinet">Личный кабинет</a>
       <a href="#pricing">Цены</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost" href="/login">Войти</a>
-      <a class="btn btn-primary" href="/register">Попробовать</a>
+      <a class="btn btn-ghost" href="/login" data-login>Войти</a>
+      <a class="btn btn-primary" href="/register" data-register>Попробовать</a>
     </div>
   </div>
+  <!-- Выпадающее мобильное меню (открывается бургером слева) -->
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Мобильное меню">
+    <a href="#search">Поиск закупок</a>
+    <a href="#how">Как это работает</a>
+    <a href="#why">Возможности</a>
+    <a href="#counterparty">Проверка контрагента</a>
+    <a href="#cabinet">Личный кабинет</a>
+    <a href="#pricing">Цены</a>
+    <div class="mm-cta">
+      <a class="btn btn-ghost" href="/login" data-login>Войти</a>
+      <a class="btn btn-primary" href="/register" data-register>Попробовать</a>
+    </div>
+  </nav>
 </header>
+<script>
+  // Бургер-меню: тоггл панели, закрытие по клику на пункт/за пределами.
+  (function(){
+    var b = document.getElementById('burger'), m = document.getElementById('mobileMenu');
+    if (!b || !m) return;
+    function set(open){
+      b.classList.toggle('open', open); m.classList.toggle('open', open);
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    b.addEventListener('click', function(){ set(!m.classList.contains('open')); });
+    m.addEventListener('click', function(e){ if (e.target.tagName === 'A') set(false); });
+    document.addEventListener('click', function(e){
+      if (m.classList.contains('open') && !m.contains(e.target) && !b.contains(e.target)) set(false);
+    });
+  })();
+</script>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
@@ -668,7 +1036,7 @@
     <div class="hero-left">
       <div class="pill hero-enter"><span class="dot"></span> ИИ-сервис для анализа документации и подготовки заявок на участие в торгах по 44-ФЗ, 223-ФЗ и в имущественных торгах.</div>
       <h1 class="hero-enter">Ваш тендерный отдел <span class="grad">—</span><br><span class="grad">теперь это ИИ помощник</span></h1>
-      <p class="lead hero-enter">Проверяет заказчика и контракт, готовит все формы и подсказывает по каждому полю. Вам остаётся заполнить и подать — уверенно и без ошибок.</p>
+      <p class="lead hero-enter">Сначала — живой поиск закупок всей России с предпросмотром глубже площадки: прогноз снижения, вероятные участники, работа комиссии. Затем — ИИ-анализ выбранного тендера: заказчик, договор, риски и готовые формы с подсказками.</p>
       <div class="hero-free hero-enter"><span class="hf-spark">✦</span><span>Зарегистрируйтесь — первые <b>2&nbsp;тендера</b> проанализируем <b>бесплатно</b>.</span></div>
 
       <div class="linkbox hero-enter">
@@ -676,74 +1044,53 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg>
           <input id="tenderLink" type="text" placeholder="Вставьте ссылку на закупку (zakupki.gov.ru, ЭТП…)" />
         </div>
-        <a class="btn btn-primary" href="/register">Заполнить заявку →</a>
+        <a class="btn btn-primary" href="/register" data-register>Проанализировать →</a>
+      </div>
+      <!-- Второй путь к анализу: не искать ссылку на площадке, а выбрать закупку в нашем поиске -->
+      <div class="hint hero-enter" style="margin-top: 8px;">
+        <span style="display: inline;">Нет ссылки под рукой? <a href="#search" style="color: var(--blue-600); font-weight: 600; text-decoration: none;">Найдите закупку в нашем поиске</a> — кнопка «Проанализировать» есть в каждой карточке.</span>
       </div>
 
       <div class="hint hero-enter">
-        <span>Анализ договора и рисков · Реквизиты из ФНС · Данные на серверах в РФ (152-ФЗ)</span>
+        <span>Поиск по закупкам всей России · Анализ договора и рисков · Реквизиты из ФНС · Данные на серверах в РФ (152-ФЗ)</span>
       </div>
     </div>
 
     <div class="hero-right">
-      <!-- «Живой отчёт»: AI скачивает документацию, проверяет заказчика и договор, собирает формы, готовит отчёт -->
+      <!-- Виджет «поиск + предпросмотр» (эхо главного экрана кабинета; анализ показан ниже в #report) -->
       <div class="hero-art hero-enter">
-        <div class="td-widget">
-          <div class="td-card">
-            <div class="td-head">
-              <div class="td-dots"><span></span><span></span><span></span></div>
-              <div class="td-url">zakupki.gov.ru/...00000000000000</div>
+        <div class="sp-widget">
+          <div class="sd-bar" style="margin:0;">
+            <svg class="sd-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <span class="sd-query">мазут в Сибири до 10 млн</span>
+            <span class="sd-ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c.7 3.9 1.6 4.8 5.5 5.5-3.9.7-4.8 1.6-5.5 5.5-.7-3.9-1.6-4.8-5.5-5.5 3.9-.7 4.8-1.6 5.5-5.5z"/></svg>ИИ</span>
+            <span class="sd-go">Найти</span>
+          </div>
+          <div class="sp-cols">
+            <div class="sp-list">
+              <div class="sp-row sp-sel">
+                <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Омская обл.</span><b class="sp-sum">9,08 млн ₽</b></div>
+                <div class="sp-name">Поставка мазута топочного М-100</div>
+                <div class="sp-due">Осталось 8 дней<span>до 24.08</span></div>
+              </div>
+              <div class="sp-row">
+                <div class="sp-meta"><span class="sp-law">223-ФЗ</span><span class="sp-reg">Красноярский край</span><b class="sp-sum">4,4 млн ₽</b></div>
+                <div class="sp-name">Мазут для нужд котельной</div>
+                <div class="sp-due">Осталось 12 дней<span>до 28.08</span></div>
+              </div>
+              <div class="sp-row">
+                <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Иркутская обл.</span><b class="sp-sum">7,3 млн ₽</b></div>
+                <div class="sp-name">Топливо котельное, доставка</div>
+                <div class="sp-due">Осталось 5 дней<span>до 21.08</span></div>
+              </div>
             </div>
-            <div class="td-statusbar">
-              <span id="td-spin" class="spinning"></span>
-              <span id="td-status">Скачиваем документацию…</span>
-            </div>
-            <div class="td-body">
-              <div class="td-row" data-step="1">
-                <div class="td-block">
-                  <div class="td-block-head">
-                    <i class="ti ti-building-bank" style="color:var(--warn);"></i>
-                    <span class="td-block-title">Заказчик проверен</span>
-                  </div>
-                  <div class="td-chips">
-                    <span class="td-chip td-chip-warn">⚠ 2 спора с поставщиками</span>
-                    <span class="td-chip td-chip-soft">1 жалоба в ФАС</span>
-                    <span class="td-chip td-chip-soft">120 закупок в год</span>
-                  </div>
-                </div>
-              </div>
-              <div class="td-row" data-step="2">
-                <div class="td-block">
-                  <div class="td-block-head">
-                    <i class="ti ti-shield-check" style="color:var(--accent);"></i>
-                    <span class="td-block-title">Договор проверен</span>
-                  </div>
-                  <div class="td-chips">
-                    <span class="td-chip td-chip-warn">Обеспечение 30%</span>
-                    <span class="td-chip td-chip-soft">Штраф 0,1%/день</span>
-                    <span class="td-chip td-chip-soft">Срок 20 дней</span>
-                  </div>
-                </div>
-              </div>
-              <div class="td-row" data-step="3">
-                <div class="td-block">
-                  <div class="td-block-head" style="margin-bottom:0;">
-                    <i class="ti ti-folder" style="color:var(--accent);"></i>
-                    <span class="td-block-title">Все формы заявки собраны</span>
-                  </div>
-                </div>
-              </div>
-              <div class="td-row" data-step="4">
-                <div class="td-report">
-                  <div class="td-report-left">
-                    <div class="td-report-icon"><i class="ti ti-checks"></i></div>
-                    <div>
-                      <p class="td-report-title">Отчёт готов</p>
-                      <p class="td-report-sub">Заказчик, договор и формы — в одном месте</p>
-                    </div>
-                  </div>
-                  <button class="td-report-btn">Открыть отчёт →</button>
-                </div>
-              </div>
+            <div class="sp-prev">
+              <div class="sp-ptitle">Поставка мазута топочного М-100</div>
+              <div class="sp-pprice">9 079 206 ₽</div>
+              <div class="sp-block"><span class="sp-bl">Прогноз торгов</span><b>снижение ~18% · цена ~7,4 млн ₽</b></div>
+              <div class="sp-block"><span class="sp-bl">Вероятные участники</span><b>5 конкурентов · ИИ-оценка шансов</b></div>
+              <div class="sp-block"><span class="sp-bl">Работа комиссии</span><b>в прошлый раз — 4 заявки</b></div>
+              <div class="sp-cta">Проанализировать тендер →</div>
             </div>
           </div>
         </div>
@@ -755,14 +1102,182 @@
 <!-- ============ LIVE COUNTER ============ -->
 <section class="counter-band">
   <div class="wrap counter-inner">
-    <div class="counter-live"><span class="ld"></span> В реальном времени</div>
+    <div class="counter-live"><span class="ld"></span> Живые данные сервиса</div>
     <div class="counter-num" id="counter" aria-live="polite">0</div>
-    <div class="counter-label">заявок уже заполнено через <span class="brand-word">Тендер-ИИ</span></div>
-    <div class="counter-sub">+<span id="counterToday">0</span> за сегодня · счётчик растёт прямо сейчас</div>
+    <div class="counter-label">закупок проанализировано через <span class="brand-word">Тендер-ИИ</span> с запуска</div>
+    <div class="counter-sub" id="counterSub">считаем по-настоящему — из базы сервиса, без накруток</div>
   </div>
 </section>
 
 <!-- ============ HOW IT WORKS ============ -->
+
+<!-- ============ ПОИСК ЗАКУПОК ============ -->
+<section class="sec" id="search">
+  <div class="wrap">
+    <div class="sec-head reveal" style="max-width: 900px;">
+      <div class="eyebrow">Новое · Поиск закупок</div>
+      <h2 class="oneline" style="font-size: clamp(24px, 3.4vw, 36px);">Участвовать в тендерах ещё никогда не&nbsp;было так&nbsp;просто</h2>
+      <p>Собственный каталог закупок всей страны — 44-ФЗ, 223-ФЗ и имущественные торги, свежие извещения появляются в ленте за минуты. Ищите привычными фильтрами — или просто напишите обычными словами: ИИ сам поймёт фразу и превратит её в точные фильтры.</p>
+    </div>
+
+    <!-- Мини-демо строки поиска: та же кнопка «ИИ», что в кабинете (эхо продукта, не выдумка) -->
+    <div class="search-demo reveal" aria-hidden="true">
+      <div class="sd-bar">
+        <svg class="sd-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="sd-query">мазут в Сибири до 5 млн, без аренды</span>
+        <span class="sd-ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c.7 3.9 1.6 4.8 5.5 5.5-3.9.7-4.8 1.6-5.5 5.5-.7-3.9-1.6-4.8-5.5-5.5 3.9-.7 4.8-1.6 5.5-5.5z"/></svg>ИИ</span>
+        <span class="sd-go">Найти</span>
+      </div>
+      <div class="sd-hint">поиск закупок мазута в Сибири с максимальной ценой 5 млн, без слова «аренда»</div>
+      <div class="sd-chips">
+        <span class="sd-chip">мазут</span>
+        <span class="sd-chip sd-chip-ex">− аренда</span>
+        <span class="sd-chip">12 регионов Сибири</span>
+        <span class="sd-chip">до 5 000 000 ₽</span>
+        <span class="sd-chip">только активные</span>
+      </div>
+    </div>
+
+    <div class="feat-grid" style="margin-top: 34px;">
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+        <h3>Живая лента</h3>
+        <p>Каталог пополняется <b>каждые 15 минут</b> напрямую из ЕИС и ГИС Торги. Открытая вкладка обновляется сама: «появилось 18 новых — показать».</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.2"/></svg></div>
+        <h3>Метки с живыми счётчиками</h3>
+        <p>Сохраняйте поиски метками — «Мазут Сибирь», «Ремонт кровли». Один клик — и лента по вашей теме, счётчик показывает, сколько закупок ждёт.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></div>
+        <h3>Видно больше, чем на площадке</h3>
+        <p>В предпросмотре — вероятные участники с ИИ-оценкой шансов, их прошлые снижения цены, результат закупки и работа комиссии. Конкурентная разведка до подачи.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="report">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Пример отчёта</div>
+      <h2>Так выглядит анализ закупки</h2>
+      <p>По каждому тендеру — вердикт с баллом, что закупается, сроки, надёжность заказчика и конкретные риски. Понятно новичку, по фактам из документации.</p>
+    </div>
+    <div class="report-wrap reveal">
+      <div class="rep-card">
+        <div class="rep-top">
+          <div>
+            <div class="rep-reg">44-ФЗ · № 0173200…000123</div>
+            <div class="rep-title">Поставка и монтаж офисной мебели для нужд учреждения</div>
+          </div>
+          <span class="rep-verdict"><span class="dot"></span>Участвовать с осторожностью · <span class="rep-score">68</span>/100</span>
+        </div>
+
+        <div class="rep-summary">Стандартная поставка мебели с монтажом от надёжного бюджетного заказчика, цена на уровне рынка. <b>На что смотреть:</b> высокое обеспечение контракта и сжатый срок монтажа.</div>
+
+        <div class="rep-body">
+          <div class="rep-cell"><div class="rl">Что закупается</div><div class="rv">Столы, шкафы, кресла — <b>42</b> позиции</div></div>
+          <div class="rep-cell"><div class="rl">Объём</div><div class="rv"><b>~180</b> предметов, с монтажом</div></div>
+          <div class="rep-cell"><div class="rl">Адрес поставки</div><div class="rv">г. Москва, склад заказчика</div></div>
+        </div>
+        <div class="rep-body" style="padding-top:0;">
+          <div class="rep-cell"><div class="rl">Подача до</div><div class="rv"><b>14.07.2026</b> 10:00 (МСК)</div></div>
+          <div class="rep-cell"><div class="rl">Срок исполнения</div><div class="rv"><b>30</b> дней с даты договора</div></div>
+          <div class="rep-cell"><div class="rl">Срок оплаты</div><div class="rv"><b>7</b> раб. дней после приёмки</div></div>
+        </div>
+
+        <div class="rep-block">
+          <div class="rbl">Финансы</div>
+          <div class="rep-chips">
+            <span class="rep-chip"><span class="ck">НМЦ</span><b>2&nbsp;480&nbsp;000&nbsp;₽</b></span>
+            <span class="rep-chip"><span class="ck">Обесп. заявки</span><b>1%</b></span>
+            <span class="rep-chip"><span class="ck">Обесп. контракта</span><b>30%</b></span>
+            <span class="rep-chip"><span class="ck">Аванс</span><b>—</b></span>
+          </div>
+          <div class="rep-nmc" style="margin-top:12px;"><span class="lvl" style="background:#f59e0b;"></span>Анализ НМЦ: цена по среднему из 3 КП — рыночная, маржа умеренная.</div>
+        </div>
+
+        <div class="rep-block">
+          <div class="rbl">Санкции по договору</div>
+          <div class="rep-chips">
+            <span class="rep-chip"><span class="ck">Пеня поставщику</span><b>≈0,06%/день</b></span>
+            <span class="rep-chip"><span class="ck">Штраф за неисполнение</span><b>10% НМЦ</b></span>
+            <span class="rep-chip"><span class="ck">Пеня заказчику</span><b>1/300 ЦБ</b></span>
+          </div>
+        </div>
+
+        <div class="rep-block">
+          <div class="rbl">Надёжность заказчика</div>
+          <div class="rep-rely2">
+            <div class="rep-gauge">
+              <!-- Спидометр 1:1 с кабинетом (ReliabilityGauge, score 72): дуга red→amber→green + объёмная стрелка -->
+              <svg viewBox="0 0 200 128" role="img" aria-label="Надёжность 72 из 100">
+                <defs>
+                  <filter id="gShadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#2b2833" flood-opacity="0.30"/></filter>
+                  <filter id="needleShadow" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#2b2833" flood-opacity="0.45"/></filter>
+                  <linearGradient id="hueArc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b42318"/><stop offset="0.25" stop-color="#dc2626"/><stop offset="0.5" stop-color="#d97706"/><stop offset="0.72" stop-color="#eab308"/><stop offset="1" stop-color="#16a34a"/></linearGradient>
+                  <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+                  <radialGradient id="hubGrad" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#ffffff"/><stop offset="0.55" stop-color="#d97706"/><stop offset="1" stop-color="#2b2833"/></radialGradient>
+                </defs>
+                <path d="M 20.0 110.0 A 80 80 0 0 1 180.0 110.0" fill="none" stroke="#e8eef6" stroke-width="21" stroke-linecap="round"/>
+                <g filter="url(#gShadow)">
+                  <path d="M 20.0 110.0 A 80 80 0 0 1 180.0 110.0" fill="none" stroke="url(#hueArc)" stroke-width="16" stroke-linecap="round"/>
+                  <path d="M 20.0 110.0 A 80 80 0 0 1 180.0 110.0" fill="none" stroke="url(#gloss)" stroke-width="16" stroke-linecap="round"/>
+                </g>
+                <path d="M 14.0 107.3 A 86 86 0 0 1 186.0 107.3" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.6" stroke-linecap="round"/>
+                <g filter="url(#needleShadow)"><polygon points="104.6,113.8 147.2,53.0 95.4,106.2 90.4,121.6" fill="#d97706"/></g>
+                <circle cx="100" cy="110" r="9" fill="url(#hubGrad)" stroke="#ffffff" stroke-width="1.5"/>
+                <text x="100" y="82" text-anchor="middle" font-size="32" font-weight="800" fill="#d97706">72</text>
+                <text x="100" y="97" text-anchor="middle" font-size="9.5" font-weight="700" fill="#94a3b8" letter-spacing="1">ИЗ 100</text>
+              </svg>
+            </div>
+            <div class="rep-rely-col">
+              <span class="rep-relbadge">Риски неисполнения обязательств: умеренные</span>
+              <p class="rep-assess">Бюджетное учреждение, заказчик по 44-ФЗ — оплата защищена законом. Найдено 2 арбитражных дела как ответчик на ~180 тыс. ₽ (несущественно); исполнительных производств и недоимки по налогам нет. Финансовое положение устойчивое.</p>
+              <div class="rep-factors">
+                <div class="rfl">Факторы риска</div>
+                <ul>
+                  <li><span class="fd amber"></span><span><b>Обеспечение контракта 30% НМЦ</b> — потребует оборотных средств заранее.</span></li>
+                  <li><span class="fd amber"></span><span><b>Сжатый срок монтажа</b> — 30 дней на ~180 предметов с установкой.</span></li>
+                </ul>
+              </div>
+              <div class="rep-metrics">
+                <div class="rm"><div class="rml">Активные иски к заказчику</div><div class="rmv">2 на 180&nbsp;000&nbsp;₽</div></div>
+                <div class="rm"><div class="rml">Недоимка по налогам</div><div class="rmv">нет</div></div>
+                <div class="rm"><div class="rml">Долги ФССП</div><div class="rmv">нет</div></div>
+                <div class="rm"><div class="rml">Проверки (2 года)</div><div class="rmv">3</div></div>
+                <div class="rm"><div class="rml">Банкротство</div><div class="rmv">не в реестре</div></div>
+                <div class="rm"><div class="rml">Концентрация (44-ФЗ)</div><div class="rmv">конкуренция есть</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rep-block">
+          <div class="rbl">Требования к участнику</div>
+          <div class="rep-chips">
+            <span class="rep-chip">СРО не требуется</span>
+            <span class="rep-chip">Лицензия не требуется</span>
+            <span class="rep-chip">Опыт поставок — желателен</span>
+          </div>
+        </div>
+
+        <div class="rep-block">
+          <div class="rbl">Обратите внимание</div>
+          <div class="rep-flags">
+            <div class="rep-flag amber"><span class="fdot"></span><span class="ft"><b>Обеспечение контракта 30% НМЦ.</b> <span class="fm">Заложите ~744&nbsp;000&nbsp;₽ в оборот или оформите банковскую гарантию прямо из отчёта.</span></span></div>
+            <div class="rep-flag amber"><span class="fdot"></span><span class="ft"><b>Сжатый срок монтажа.</b> <span class="fm">30 дней на поставку и монтаж ~180 предметов — оцените логистику и бригаду заранее.</span></span></div>
+            <div class="rep-flag green"><span class="fdot"></span><span class="ft"><b>Заказчик надёжный.</b> <span class="fm">Оплата по 44-ФЗ защищена законом, споров о неоплате нет.</span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="rep-cap">Иллюстрация интерфейса. В кабинете отчёт строится по реальной документации вашей закупки.</div>
+    </div>
+  </div>
+</section>
+
 <section class="sec" id="how">
   <div class="wrap">
     <div class="sec-head reveal" style="max-width: 1000px;">
@@ -792,15 +1307,18 @@
       <div class="step reveal">
         <div class="num">ШАГ 04</div>
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></div>
-        <h3>Получаете готовый пакет</h3>
-        <p>Решили участвовать — сервис заполняет формы данными вашей организации. Скачивайте .docx / .pdf и подавайте. Подписание ЭЦП и подача на площадке остаются за вами — так требует регламент ЭТП.</p>
+        <h3>Готовите заявку с ассистентом</h3>
+        <p>Формы заявки собираем отдельными файлами + чек-лист «что подать» и подсказки, что вписать. Заполнение, подписание ЭЦП и подачу на площадке делаете вы — так требует регламент ЭТП. По любому вопросу поможет ИИ-ассистент Доки.</p>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ============ ДЕМО ОТЧЁТА ============ -->
+
+
 <!-- ============ FEATURES ============ -->
-<section class="sec" id="why" style="background: var(--blue-50); border-block: 1px solid var(--line);">
+<section class="sec" id="why" style="background: rgba(230,227,240,.45); border-block: 1px solid var(--line);">
   <div class="wrap">
     <div class="sec-head reveal" style="max-width: 880px;">
       <div class="eyebrow">Возможности</div>
@@ -809,20 +1327,35 @@
     </div>
     <div class="feat-grid">
       <div class="feat reveal">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8.5 14.5l2 2 4-4"/></svg></div>
-        <h3>Автозаполнение без ошибок</h3>
-        <p>Вставьте ссылку — и <span class="brand-word">Тендер-ИИ</span> подставит реквизиты во все формы одинаково аккуратно. Наименование, адрес, КПП, ОГРН подтянутся из ФНС по ИНН, профиль заполняется один раз. Пакет собирается за минуты вместо нескольких часов ручной работы.</p>
-      </div>
-      <div class="feat reveal">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7l-3 6a3 3 0 006 0z"/><path d="M19 7l3 6a3 3 0 01-6 0z"/><path d="M8 21h8"/></svg></div>
-        <h3>Юридический анализ заказчика и договора</h3>
-        <p>Проверяем заказчика и условия проекта договора: риски, спорные пункты, штрафы и обеспечение — чтобы вы видели подводные камни до подачи заявки и решали осознанно, участвовать или нет.</p>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 1112 2"/><path d="M22 4L12 14l-3-3"/></svg></div>
+        <h3>Вердикт «участвовать или нет»</h3>
+        <p>По каждой закупке — понятный вывод: <b>участвовать, с осторожностью или отказаться</b>, с баллом и объяснением. Разбираем предмет, что закупается, НМЦ, обеспечение, аванс, сроки, штрафы и требования к участнику под ваш профиль.</p>
         <p style="margin-top: 10px; font-size: 11.5px; line-height: 1.45; color: #9db3cc;">Анализ носит информационный характер и не заменяет юридическую консультацию.</p>
       </div>
       <div class="feat reveal">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12l8.73-5.04"/><path d="M12 22V12"/></svg></div>
-        <h3>Готовый пакет под площадки</h3>
-        <p>На выходе — собранный пакет заявки в формате .docx (Word), готовый к подаче. Поддержка 44-ФЗ, 223-ФЗ и площадок ЕИС. Подписание ЭЦП и подача на площадке остаются за вами — так требует регламент ЭТП.</p>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+        <h3>Надёжность заказчика</h3>
+        <p>Спидометр надёжности по ИНН: арбитражные дела, где заказчик — ответчик, долги ФССП, проверки, банкротство, недоимка и «заточенность» под одного поставщика. Видите, кому платят вовремя, а с кем судятся.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8.5 14.5l2 2 4-4"/></svg></div>
+        <h3>Формы заявки под ключ</h3>
+        <p>Распознаём анкеты и формы в документации и готовим их по вашему профилю — подсказываем, где какой реквизит вписать. На выходе <b>каждая форма отдельным .docx</b> + чек-лист «что подать» и подсказки, что вписать. Заполняете и подаёте вы. Сметы помечаем — их готовит специалист.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Проверка контрагента</h3>
+        <p>Проверьте партнёра или конкурента по ИНН до сделки: <b>ЗСК-светофор ЦБ РФ</b> (красная группа), <b>блокировки счетов ФНС</b>, надёжность, арбитраж со всеми делами, госзакупки, лицензии, компании руководителя и выписки ЕГРЮЛ/МСП.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M9 11h.01M15 11h.01"/></svg></div>
+        <h3>Банковская гарантия сразу</h3>
+        <p>Нужно обеспечение заявки или контракта? Оформите <b>банковскую гарантию прямо из отчёта</b> — сервис сам подскажет, когда она требуется, и проведёт к оформлению, не выходя из закупки.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
+        <h3>Документы по одной ссылке</h3>
+        <p>Вставляете ссылку — забираем весь пакет с ЕИС (44/223-ФЗ), ГИС Торги и коммерческих площадок, распаковываем архивы (ZIP/RAR/7z), разбираем DOCX/PDF/Excel. Скачивать по одному файлу и вручную распаковывать больше не нужно.</p>
       </div>
     </div>
   </div>
@@ -835,12 +1368,12 @@
       <div class="cab-inner">
         <div class="cab-copy">
           <div class="eyebrow">Личный кабинет</div>
-          <h2>Один экран. Одна ссылка. Готовая заявка.</h2>
-          <p>В личном кабинете вы просто вставляете ссылку на тендер — а сервис в реальном времени показывает, как скачивает документы, распознаёт формы и заполняет их.</p>
+          <h2>Один экран. Одна ссылка. Готовые формы.</h2>
+          <p>В личном кабинете вы просто вставляете ссылку на тендер — а сервис в реальном времени показывает, как скачивает документы, распознаёт формы и готовит их к заполнению.</p>
           <ul class="cab-list">
             <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Профиль организации заполняется один раз и используется во всех заявках</li>
-            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> История поданных заявок и статусы по каждому тендеру</li>
-            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Видно, какие поля заполнены автоматически, а какие требуют проверки</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> История анализов и статусы по каждому тендеру</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Видно, какие поля подсказаны из профиля, а какие вписать вручную</li>
           </ul>
         </div>
 
@@ -861,11 +1394,11 @@
               <div class="prow done"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="pt">Документация закупки скачана<div class="ps">14 файлов · 28 МБ</div></span></div>
               <div class="prow done"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="pt">Реквизиты организации из ФНС<div class="ps">ИНН · КПП · ОГРН · адрес</div></span></div>
               <div class="prow run"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/></svg></span><span class="pt">Распознаём формы и анкеты<div class="ps">Найдено 3 формы для заполнения…</div></span></div>
-              <div class="prow wait"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="pt">Заполнение данными организации<div class="ps">Ожидает</div></span></div>
+              <div class="prow wait"><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="pt">Формы + чек-лист «что подать»<div class="ps">Ожидает</div></span></div>
             </div>
             <div class="doc-out">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>
-              <div><div class="t">Заявка_участника.docx</div><div class="s">Будет готова после заполнения</div></div>
+              <div><div class="t">Заявка_участника.docx</div><div class="s">Готова к заполнению — с подсказками</div></div>
             </div>
           </div>
         </div>
@@ -873,6 +1406,110 @@
     </div>
   </div>
 </section>
+
+<!-- ============ ИИ-АССИСТЕНТ ============ -->
+<section class="sec" id="assistant">
+  <div class="wrap">
+    <div class="cabinet reveal">
+      <div class="cab-inner">
+        <div class="cab-copy">
+          <div class="eyebrow">Новое · ИИ-ассистент</div>
+          <h2>Доки — ваш ИИ-ассистент по тендеру</h2>
+          <p>После анализа в углу кабинета появляется Доки — живой персонаж-специалист. Задайте вопрос — он ответит <b>по этой закупке</b> (сроки, требования, риски заказчика, обеспечение) и <b>по законам</b>: 44-ФЗ, 223-ФЗ и торги по реализации имущества (178-ФЗ, 127-ФЗ, 229-ФЗ). Никаких хождений по документации вручную.</p>
+          <ul class="cab-list">
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Отвечает по конкретному тендеру — на основе готового разбора</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Знает 44-ФЗ, 223-ФЗ и торги по реализации имущества (178-ФЗ / 127-ФЗ / 229-ФЗ) — задавайте и общие вопросы</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Безопасно: доступ только к этому тендеру, без ваших данных и других закупок</li>
+          </ul>
+        </div>
+
+        <!-- мок окна ассистента -->
+        <div class="window">
+          <div class="win-bar">
+            <i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+            <span class="url">app.tenderdoki.ru/кабинет</span>
+          </div>
+          <div class="win-body" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;">
+              <span style="width:40px;height:40px;flex:0 0 auto;">
+                <svg viewBox="0 0 60 60" aria-hidden>
+                  <rect x="16" y="10" width="28" height="40" rx="6" fill="#fff" stroke="#8781c6" stroke-width="2.5"/>
+                  <path d="M38 10 L44 16 L38 16 Z" fill="#a59fd6"/>
+                  <circle cx="25" cy="28" r="2.4" fill="#241b45"/><circle cx="35" cy="28" r="2.4" fill="#241b45"/>
+                  <path d="M25 34 q5 4 10 0" stroke="#241b45" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <path d="M22 42 h16" stroke="#cfc4f2" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div><div style="font-weight:700;color:#2b2833;">Доки</div><div style="font-size:12px;color:#7b768f;">ассистент по этому тендеру</div></div>
+            </div>
+            <div style="align-self:flex-end;max-width:80%;background:#8781c6;color:#fff;border-radius:14px 14px 4px 14px;padding:8px 12px;font-size:14px;">Какой срок подачи заявки?</div>
+            <div style="align-self:flex-start;max-width:85%;background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:8px 12px;font-size:14px;color:#2b2833;box-shadow:0 6px 18px rgba(76,29,149,.08);">Срок подачи заявки — <b>31 июля 2026 года</b>. Обеспечение заявки не требуется, контракта — 5% цены.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:12px;padding:5px 11px;border-radius:999px;background:#f1eff6;color:#585379;border:1px solid #dcd9ea;">Какие требования?</span>
+              <span style="font-size:12px;padding:5px 11px;border-radius:999px;background:#f1eff6;color:#585379;border:1px solid #dcd9ea;">Риски заказчика?</span>
+              <span style="font-size:12px;padding:5px 11px;border-radius:999px;background:#f1eff6;color:#585379;border:1px solid #dcd9ea;">Как проходит аукцион по 44-ФЗ?</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ПРОВЕРКА КОНТРАГЕНТА ============ -->
+<section class="sec" id="counterparty" style="background: rgba(230,227,240,.45); border-block: 1px solid var(--line);">
+  <div class="wrap">
+    <div class="cabinet reveal">
+      <div class="cab-inner">
+        <div class="cab-copy">
+          <div class="eyebrow">Проверка контрагента</div>
+          <h2>Проверьте партнёра до сделки — по ИНН за минуту</h2>
+          <p>Заказчик, поставщик или конкурент — введите ИНН или название и увидите всю картину сразу. То, что скрыто в десятке реестров, — на одном экране.</p>
+          <ul class="cab-list">
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> <b>ЗСК-светофор ЦБ РФ</b> — не в «красной» ли группе риска</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Блокировки счетов ФНС, арбитраж со всеми делами и выгрузкой, ФССП</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Надёжность, финансы по годам, госзакупки, лицензии, компании руководителя, выписки ЕГРЮЛ и МСП</li>
+          </ul>
+        </div>
+
+        <!-- визуал: карточка проверки со ЗСК-светофором -->
+        <div class="window">
+          <div class="win-bar">
+            <i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+            <span class="url">app.tenderdoki.ru/проверка-контрагента</span>
+          </div>
+          <div class="win-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <div>
+                <div style="font-weight:800;color:var(--blue-900);font-size:15px;">ООО «Компания Нефтересурс»</div>
+                <div style="font-size:12px;color:var(--muted);">ИНН 5501260168 · Омск · МСП (микропредприятие)</div>
+              </div>
+              <span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:999px;padding:4px 10px;">Надёжность 90/100</span>
+            </div>
+            <!-- 3D ЗСК-светофор (зелёный = нет рисков) -->
+            <div style="display:flex;align-items:center;gap:14px;margin-top:16px;padding:12px;border-radius:12px;background:#f1eff6;border:1px solid var(--blue-100);">
+              <div class="tl3d"><span class="lamp red"></span><span class="lamp green on"></span></div>
+              <div>
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8aa0bd;">ЗСК · ЦБ РФ</div>
+                <div style="font-weight:800;color:#15803d;font-size:15px;">Нет рисков</div>
+                <div style="font-size:11px;color:#8aa0bd;">не в «красной» группе Банка России</div>
+              </div>
+            </div>
+            <!-- ключевые показатели -->
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span style="color:var(--muted);">Блокировка счетов (ФНС)</span><b style="color:#15803d;">нет</b></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span style="color:var(--muted);">Госзакупки (поставщик)</span><b style="color:var(--blue-900);">4 контракта · 9,1 млн ₽</b></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span style="color:var(--muted);">Лицензии</span><b style="color:var(--blue-900);">2 действующие</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ЖИВАЯ ПОМОЩЬ: БАНКОВСКАЯ ГАРАНТИЯ + ЮРИСТ ============ -->
+
 
 <!-- ============ TRUST / SECURITY ============ -->
 <section class="sec" id="trust">
@@ -903,13 +1540,48 @@
   </div>
 </section>
 
+<!-- ============ СРАВНЕНИЕ ============ -->
+<section class="sec" id="compare">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Зачем это нужно</div>
+      <h2>Вручную и с Тендер-ИИ</h2>
+      <p>Одна закупка — это десятки страниц документации, реестры по заказчику и пачка форм под заполнение. Сервис снимает рутину и риск ошибок.</p>
+    </div>
+    <div class="compare-grid">
+      <div class="cmp manual reveal">
+        <h3>😮‍💨 Вручную</h3>
+        <div class="cmp-sub">Как обычно готовят заявку</div>
+        <ul>
+          <li><span class="mk">✕</span>Скачивать файлы по одному, распаковывать архивы RAR/7z</li>
+          <li><span class="mk">✕</span>Вычитывать проект договора: сроки, оплата, штрафы, обеспечение</li>
+          <li><span class="mk">✕</span>Проверять заказчика по десятку реестров вручную</li>
+          <li><span class="mk">✕</span>Заполнять формы, сверять реквизиты — легко ошибиться и получить отклонение</li>
+          <li><span class="mk">✕</span>Несколько часов на одну закупку</li>
+        </ul>
+      </div>
+      <div class="cmp ai reveal">
+        <h3>⚡ С Тендер-ИИ</h3>
+        <div class="cmp-sub">От ссылки до готового пакета</div>
+        <ul>
+          <li><span class="mk">✓</span>Вставили ссылку — весь пакет скачан и распакован автоматически</li>
+          <li><span class="mk">✓</span>Готовый вердикт: риски договора, сроки, санкции — простым языком</li>
+          <li><span class="mk">✓</span>Надёжность заказчика по ИНН — на одном экране</li>
+          <li><span class="mk">✓</span>Формы подготовлены по профилю: где что вписать — подсказано</li>
+          <li><span class="mk">✓</span>Минуты вместо часов — вам остаётся проверить, подписать и подать</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ PRICING ============ -->
-<section class="sec" id="pricing" style="background: var(--blue-50); border-block: 1px solid var(--line);">
+<section class="sec" id="pricing" style="background: rgba(230,227,240,.45); border-block: 1px solid var(--line);">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Тарифы</div>
       <h2>Платите за заявки, а не за подписку «на всякий случай»</h2>
-      <p>Пакеты заявок на месяц. В каждый тариф входит автозаполнение документации и юридический анализ заказчика и договора.</p>
+      <p>Пакеты заявок на месяц. В каждый тариф входит разбор документации, подготовка форм с подсказками и юридический анализ заказчика и договора.</p>
     </div>
 
     <div class="price-grid">
@@ -917,53 +1589,90 @@
       <div class="plan reveal">
         <div class="pname">Старт</div>
         <div class="pdesc">Для тех, кто участвует в закупках время от времени.</div>
-        <div class="pprice"><b>2150</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pprice"><b>1990</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
         <div class="pquota">5 заявок в месяц</div>
-        <div class="punit">≈ 430 ₽ за одну заявку</div>
+        <div class="punit">≈ 398 ₽ за одну заявку</div>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Автозаполнение пакета заявки по ссылке</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Разбор закупки и подготовка форм по ссылке</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Юридический анализ заказчика и договора</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Реквизиты из ФНС по ИНН</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Готовые .docx / .pdf</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Формы .docx / .pdf с подсказками</li>
         </ul>
-        <a class="btn btn-ghost" href="/register">Выбрать «Старт»</a>
+        <a class="btn btn-ghost" href="/register" data-register>Выбрать «Старт»</a>
       </div>
 
       <!-- Бизнес (популярный) -->
       <div class="plan popular reveal">
         <div class="tag-pop">⭐ Популярный</div>
-        <div class="pname">Бизнес</div>
+        <div class="pname">Профи</div>
         <div class="pdesc">Оптимально для регулярного участия в тендерах.</div>
-        <div class="pprice"><b>3600</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
-        <div class="pquota">10 заявок в месяц</div>
-        <div class="punit">≈ 360 ₽ за одну заявку</div>
+        <div class="pprice"><b>4990</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">15 заявок в месяц</div>
+        <div class="punit">≈ 333 ₽ за одну заявку</div>
         <ul>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Старт»</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Юридический анализ заказчика и договора</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> История заявок и статусы по тендерам</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Прогноз торгов и аналитика рынка</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Приоритетная обработка</li>
         </ul>
-        <a class="btn btn-primary" href="/register">Выбрать «Бизнес»</a>
+        <a class="btn btn-primary" href="/register" data-register>Выбрать «Профи»</a>
       </div>
 
       <!-- Про -->
       <div class="plan reveal">
-        <div class="pname">Про</div>
+        <div class="pname">Макс</div>
         <div class="pdesc">Для активных участников и тендерных отделов.</div>
-        <div class="pprice"><b>6000</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
-        <div class="pquota">25 заявок в месяц</div>
-        <div class="punit">≈ 240 ₽ за одну заявку</div>
+        <div class="pprice"><b>9990</b><span class="cur">₽</span><span class="per">/ месяц</span></div>
+        <div class="pquota">40 заявок в месяц</div>
+        <div class="punit">≈ 250 ₽ за одну заявку</div>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Бизнес»</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Всё из тарифа «Профи»</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Расширенный юридический анализ договора</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Несколько организаций в одном кабинете</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Проверка контрагентов без лимита</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Поддержка в приоритете</li>
         </ul>
-        <a class="btn btn-ghost" href="/register">Выбрать «Про»</a>
+        <a class="btn btn-ghost" href="/register" data-register>Выбрать «Макс»</a>
       </div>
     </div>
 
-    <p class="price-note"><b style="color: var(--blue-700);">🎁 Первая заявка при регистрации — бесплатно</b></p>
+    <p class="price-note"><b style="color: var(--blue-700);">🎁 Первые 2 анализа при регистрации — бесплатно</b></p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec" id="faq" style="background: rgba(230,227,240,.45); border-block: 1px solid var(--line);">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Вопросы</div>
+      <h2>Частые вопросы</h2>
+      <p>Коротко о главном — безопасность данных, подача заявки и как всё устроено.</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item reveal">
+        <summary>Безопасно ли передавать вам данные организации?</summary>
+        <div class="faq-a">Да. Мы работаем по 152-ФЗ, персональные данные хранятся на серверах в России. Реквизиты берутся только из вашего профиля и из ФНС по ИНН — в анализ уходит публичная документация закупки, а не ваши конфиденциальные данные. Ценовое предложение мы не запрашиваем и не храним.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Кто подписывает и подаёт заявку на площадке?</summary>
+        <div class="faq-a">Подписание электронной подписью (ЭЦП) и подача на электронной площадке остаются за вами — так требует регламент ЭТП. Сервис делает всё до этого шага: скачивает документацию, анализирует закупку и готовит формы заявки в .docx / .pdf с подсказкой по каждому полю. Вам остаётся вписать значения, подписать и отправить.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>С какими закупками работает сервис?</summary>
+        <div class="faq-a">44-ФЗ, 223-ФЗ и имущественные торги. Документы забираются с ЕИС (zakupki.gov.ru), ГИС Торги и коммерческих электронных площадок — по ссылке на закупку или загрузкой файлов напрямую.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Не подставит ли сервис неверные данные в формы?</summary>
+        <div class="faq-a">Нет. Реквизиты подставляются только из проверенных источников — вашего профиля и ФНС. Если для поля нет достоверного значения, система помечает его как требующее проверки, а не заполняет наугад. Цену вписываете только вы, сметы помечаются для специалиста. Все подсказанные и ручные поля подсвечены — ничего важного не потеряется.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Заменяет ли это юриста?</summary>
+        <div class="faq-a">Анализ носит информационный характер и помогает быстро понять риски и условия закупки, но не заменяет юридическую консультацию. По сложным договорам решение об участии всегда за вами; в старших тарифах доступен расширенный разбор договора.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Сколько это стоит и что если я участвую редко?</summary>
+        <div class="faq-a">Оплата — за пакеты заявок на месяц, без обязательной подписки «на всякий случай»: от 1990 ₽ за 5 заявок. При регистрации первая заявка — бесплатно, чтобы попробовать на своей реальной закупке.</div>
+      </details>
+    </div>
   </div>
 </section>
 
@@ -971,10 +1680,10 @@
 <section class="sec" id="cta">
   <div class="wrap">
     <div class="cta reveal">
-      <h2>Перестаньте заполнять тендерные формы вручную</h2>
+      <h2>Готовьте тендерные заявки быстрее и без ошибок</h2>
       <p class="oneline" style="max-width: none;">Попробуйте Тендер-ИИ на своей следующей закупке. Вставьте ссылку — и посмотрите, как заявка собирается сама.</p>
       <a class="btn btn-white" href="#hero">Вставить ссылку на тендер →</a>
-      <div style="position: relative; margin-top: 16px; font-size: 15px; color: #cfe0f5; font-weight: 600;">🎁 При регистрации первая заявка — бесплатно</div>
+      <div style="position: relative; margin-top: 16px; font-size: 15px; color: #d5cef0; font-weight: 600;">🎁 При регистрации первая заявка — бесплатно</div>
     </div>
   </div>
 </section>
@@ -986,11 +1695,11 @@
       <div>
         <a class="logo" href="#">
           <span class="logo-mark">
-            <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#1c64c4" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#9bbce6" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
+            <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#7a73bd" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#9bbce6" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
           </span>
           <span class="logo-text">Тендер<b>-ИИ</b></span>
         </a>
-        <p>Первый в России сервис автоматического заполнения тендерной документации. Вставьте ссылку — получите готовый пакет заявки.</p>
+        <p>Сервис анализа закупок и подготовки заявки. Вставьте ссылку — получите разбор тендера и готовые формы с подсказками.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -1008,15 +1717,16 @@
           <a href="#">Реквизиты из ФНС</a>
         </div>
         <div class="foot-col">
-          <h4>Компания</h4>
-          <a href="#">О сервисе</a>
-          <a href="#">Безопасность (152-ФЗ)</a>
-          <a href="#">Контакты</a>
+          <h4>Правовое</h4>
+          <a href="/privacy">Политика конфиденциальности</a>
+          <a href="/terms">Пользовательское соглашение</a>
+          <a href="/offer">Публичная оферта</a>
+          <a href="/refund">Правила возврата и отказа от услуг</a>
         </div>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Тендер-ИИ.</span>
+      <span>© 2026 Тендер-ИИ. <a href="/privacy" style="color:inherit;text-decoration:underline;">Политика конфиденциальности</a> · <a href="/terms" style="color:inherit;text-decoration:underline;">Пользовательское соглашение</a></span>
       <span>Сделано для участников госзакупок в России 🇷🇺</span>
     </div>
   </div>
@@ -1052,6 +1762,7 @@
     // Lenis — мягкий инерционный скролл, синхронизирован с тикером GSAP.
     var lenis = new Lenis({ duration: 1.05, smoothWheel: true });
     window.__lenis = lenis;
+    if (!location.hash) lenis.scrollTo(0, { immediate: true }); // при обновлении — в топ (не восстанавливать позицию)
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function(t){ lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);
@@ -1246,40 +1957,47 @@
     run();
   })();
 
-  // ---- Live counter: растёт по реальному времени, одинаково у всех ----
+  // ---- Живой счётчик: РЕАЛЬНЫЕ числа из БД сервиса (/api/stats), без накруток ----
   (function liveCounter(){
-    const EPOCH = Date.UTC(2026, 0, 1, 0, 0, 0); // старт отсчёта
-    const BASE = 128450;       // заявок на момент старта (демо-значение)
-    const SEC_PER_APP = 6;     // +1 заявка каждые 6 секунд
+    const band = document.querySelector('.counter-band');
     const el = document.getElementById('counter');
-    const todayEl = document.getElementById('counterToday');
-    let shown = -1;
-
-    const calc = () => BASE + Math.floor((Date.now() - EPOCH) / 1000 / SEC_PER_APP);
-    const calcToday = () => {
-      const d = new Date(); const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-      return Math.floor((Date.now() - midnight) / 1000 / SEC_PER_APP);
-    };
+    const subEl = document.getElementById('counterSub');
+    if (!band || !el) return;
     const fmt = n => n.toLocaleString('ru-RU');
 
     function render(n){
       const str = fmt(n);
       const prev = el.dataset.val || '';
-      // посимвольно, с «прыжком» изменившихся цифр
       el.innerHTML = str.split('').map((ch, i) => {
         const changed = prev[i] !== ch;
-        return `<span class="digit${changed ? ' bump' : ''}">${ch === ' ' || ch === ' ' ? ' ' : ch}</span>`;
+        return `<span class="digit${changed ? ' bump' : ''}">${/\s/.test(ch) ? '&nbsp;' : ch}</span>`;
       }).join('');
       el.dataset.val = str;
     }
 
-    function tick(){
-      const n = calc();
-      if (n !== shown){ shown = n; render(n); }
-      todayEl.textContent = fmt(calcToday());
+    // Плавный count-up 0 → значение при первом появлении блока в кадре.
+    function countUp(target){
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || target <= 0){ render(target); return; }
+      const dur = 1200, t0 = performance.now();
+      (function step(t){
+        const p = Math.min(1, (t - t0) / dur);
+        render(Math.round(target * (1 - Math.pow(1 - p, 3)))); // ease-out cubic
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
     }
-    tick();
-    setInterval(tick, 1000);
+
+    fetch('/api/stats').then(r => r.ok ? r.json() : null).then(d => {
+      if (!d || !d.ok){ band.style.display = 'none'; return; }
+      const start = () => {
+        countUp(d.tenders);
+        if (subEl && d.forms > 0) subEl.textContent = 'и ' + fmt(d.forms) + ' документов заявок сформировано · данные из базы сервиса';
+      };
+      if ('IntersectionObserver' in window){
+        const io2 = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io2.disconnect(); start(); } }, { threshold: .3 });
+        io2.observe(band);
+      } else start();
+    }).catch(() => { band.style.display = 'none'; });
   })();
 
   // Hero demo: paste link -> scroll to cabinet and animate
@@ -1305,37 +2023,292 @@
   }
 </script>
 
-<!-- Hero «живой отчёт»: цикл скачивание → заказчик → договор → формы → отчёт -->
+
+
+<!-- Cookie-предупреждение (152-ФЗ / раздел 9 Политики). Самодостаточно: без внешних зависимостей. -->
+<div id="cookie-banner" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie"
+  style="position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:760px;margin:0 auto;
+         background:#2b2833;color:#e9e3f6;border:1px solid rgba(196,181,253,.25);border-radius:16px;
+         box-shadow:0 20px 50px rgba(76,63,176,.35);padding:18px 20px;
+         display:none;flex-wrap:wrap;align-items:center;gap:14px 18px;
+         font-family:'Golos Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <p style="margin:0;flex:1 1 320px;font-size:14px;line-height:1.55;color:#cdddf2;">
+    Мы используем файлы cookie для работы сайта, аутентификации и обезличенной аналитики.
+    Продолжая пользоваться сервисом, вы соглашаетесь с их использованием.
+    Подробнее — в <a href="/privacy" style="color:#c5c1e0;font-weight:600;text-decoration:underline;">Политике обработки персональных данных</a>.
+  </p>
+  <div style="display:flex;gap:10px;flex:0 0 auto;">
+    <button type="button" id="cookie-necessary"
+      style="cursor:pointer;border:1px solid rgba(196,181,253,.35);background:rgba(255,255,255,.06);
+             color:#e9e3f6;font-weight:600;font-size:14px;padding:10px 16px;border-radius:10px;">Только необходимые</button>
+    <button type="button" id="cookie-accept"
+      style="cursor:pointer;border:0;background:linear-gradient(135deg,#8781c6,#46426b);
+             color:#fff;font-weight:600;font-size:14px;padding:10px 18px;border-radius:10px;">Принять</button>
+  </div>
+</div>
 <script>
 (function(){
-  const status = document.getElementById('td-status');
-  const spin   = document.getElementById('td-spin');
-  if (!status || !spin) return;
-  const rows = Array.from(document.querySelectorAll('.td-row'));
-  const stages = [
-    { t:'Скачиваем документацию…', show:null, delay:1100 },
-    { t:'Проверяем заказчика…',    show:1,    delay:1300 },
-    { t:'Анализируем договор…',    show:2,    delay:1300 },
-    { t:'Собираем формы в пакет…', show:3,    delay:1300 },
-    { t:'Формируем отчёт…',        show:null, delay:900  },
-    { t:'✓ Отчёт готов', done:true, show:4,   delay:2800 },
-  ];
-  function reset(){
-    rows.forEach(r => { r.style.opacity=0; r.style.transform='translateY(8px)'; });
-    spin.className='spinning'; spin.textContent=''; spin.style.color=''; spin.style.fontSize='';
-    status.style.color='var(--text-primary)';
+  var KEY='cookie-consent';
+  var el=document.getElementById('cookie-banner');
+  if(!el) return;
+  var saved;
+  try{ saved=localStorage.getItem(KEY); }catch(e){ saved=null; }
+  if(saved){ return; } // выбор уже сделан — оставляем скрытым
+  el.style.display='flex';
+  function choose(v){
+    try{ localStorage.setItem(KEY, JSON.stringify({v:v,ts:Date.now()})); }catch(e){}
+    el.style.display='none';
+    // Аналитические cookie подключать только при согласии 'all' (крючок на будущее):
+    // if(v==='all'){ /* init analytics here */ }
   }
-  function play(i){
-    if(i >= stages.length){ setTimeout(()=>{ reset(); play(0); }, 1200); return; }
-    const s = stages[i];
-    status.textContent = s.t;
-    if(s.show){ const r = rows.find(x=>x.dataset.step==s.show); if(r){ r.style.opacity=1; r.style.transform='translateY(0)'; } }
-    if(s.done){ spin.className='done'; spin.textContent='✓'; spin.style.color='var(--success)'; spin.style.fontSize='16px'; status.style.color='var(--success)'; }
-    else { spin.className='spinning'; spin.textContent=''; status.style.color='var(--text-primary)'; }
-    setTimeout(()=>play(i+1), s.delay);
+  document.getElementById('cookie-accept').addEventListener('click',function(){choose('all');});
+  document.getElementById('cookie-necessary').addEventListener('click',function(){choose('necessary');});
+})();
+</script>
+
+<!-- ============ МОДАЛКА ВХОДА ============ -->
+<div id="loginModal" class="lm-overlay" role="dialog" aria-modal="true" aria-labelledby="lmTitle" hidden>
+  <div class="lm-card">
+    <button type="button" class="lm-close" id="lmClose" aria-label="Закрыть">&times;</button>
+    <div class="lm-mark">
+      <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#7a73bd" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#c5c1e0" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
+    </div>
+    <h2 id="lmTitle" class="lm-title">Вход в кабинет</h2>
+    <p class="lm-sub">Введите почту и пароль, чтобы продолжить.</p>
+    <form id="lmForm" novalidate>
+      <div class="lm-field">
+        <label class="lm-lbl" for="lmEmail">Почта</label>
+        <input id="lmEmail" name="email" class="lm-input" type="email" autocomplete="email" required placeholder="you@company.ru" />
+      </div>
+      <div class="lm-field">
+        <label class="lm-lbl" for="lmPass">Пароль</label>
+        <div class="lm-passwrap">
+          <input id="lmPass" name="password" class="lm-input" type="password" autocomplete="current-password" required />
+          <button type="button" class="lm-eye" id="lmEye" aria-label="Показать пароль" tabindex="-1">
+            <svg id="lmEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="lm-remember">
+        <label class="lm-check"><input type="checkbox" id="lmRemember" checked /> <span>Запомнить меня на этом устройстве</span></label>
+      </div>
+      <div class="lm-error" id="lmError" hidden></div>
+      <button type="submit" class="btn btn-primary lm-submit" id="lmSubmit">Войти</button>
+    </form>
+    <p class="lm-alt">Нет аккаунта? <a href="/register" data-register>Зарегистрироваться</a></p>
+  </div>
+</div>
+<script>
+(function(){
+  var modal = document.getElementById('loginModal');
+  if (!modal) return;
+  var form = document.getElementById('lmForm');
+  var emailEl = document.getElementById('lmEmail');
+  var passEl = document.getElementById('lmPass');
+  var errEl = document.getElementById('lmError');
+  var submitEl = document.getElementById('lmSubmit');
+  var lastFocus = null;
+
+  function open(e){
+    if (e) e.preventDefault();
+    var reg = document.getElementById('registerModal');
+    if (reg) reg.hidden = true; // если открыта регистрация — закрыть
+    lastFocus = document.activeElement;
+    errEl.hidden = true; errEl.textContent = '';
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ emailEl.focus(); }, 40);
   }
-  reset();
-  setTimeout(()=>play(0), 300);
+  function close(){
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  // Триггеры «Войти»
+  document.querySelectorAll('[data-login]').forEach(function(a){ a.addEventListener('click', open); });
+  document.getElementById('lmClose').addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !modal.hidden) close(); });
+
+  // Показать/скрыть пароль
+  document.getElementById('lmEye').addEventListener('click', function(){
+    var show = passEl.type === 'password';
+    passEl.type = show ? 'text' : 'password';
+    this.setAttribute('aria-label', show ? 'Скрыть пароль' : 'Показать пароль');
+  });
+
+  // Вход через Auth.js (тот же поток, что next-auth/react: CSRF + X-Auth-Return-Redirect)
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    errEl.hidden = true;
+    var email = emailEl.value.trim();
+    var password = passEl.value;
+    if (!email || !password) return;
+    submitEl.disabled = true; submitEl.textContent = 'Входим…';
+    try {
+      var remember = document.getElementById('lmRemember').checked ? '1' : '0';
+      var csrf = (await (await fetch('/api/auth/csrf', { credentials: 'same-origin' })).json()).csrfToken;
+      var res = await fetch('/api/auth/callback/credentials', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Auth-Return-Redirect': '1' },
+        body: new URLSearchParams({ csrfToken: csrf, email: email, password: password, remember: remember, callbackUrl: '/dashboard' })
+      });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || !data.url || /[?&]error=/.test(data.url)) {
+        errEl.textContent = 'Не получилось войти: проверьте почту и пароль. Если вы только что зарегистрировались — сначала подтвердите почту по ссылке из письма.';
+        errEl.hidden = false;
+        return;
+      }
+      window.location.href = '/dashboard'; // session-cookie установлен — переходим в кабинет
+    } catch (err) {
+      errEl.textContent = 'Не удалось связаться с сервером. Попробуйте ещё раз.';
+      errEl.hidden = false;
+    } finally {
+      submitEl.disabled = false; submitEl.textContent = 'Войти';
+    }
+  });
+})();
+</script>
+
+<!-- ============ МОДАЛКА РЕГИСТРАЦИИ ============ -->
+<div id="registerModal" class="lm-overlay" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden>
+  <div class="lm-card lm-reg">
+    <button type="button" class="lm-close" id="rmClose" aria-label="Закрыть">&times;</button>
+    <div class="lm-mark">
+      <svg viewBox="0 0 64 64" fill="none"><path d="M20 17h13l9 9v21H20z" fill="#fff" fill-opacity=".96"/><path d="M33 17v9h9" fill="none" stroke="#7a73bd" stroke-width="2"/><path d="M25 34h10M25 40h7" stroke="#c5c1e0" stroke-width="2.4" stroke-linecap="round"/><path d="M46 16c.9 5 2.1 6.2 7.1 7.1-5 .9-6.2 2.1-7.1 7.1-.9-5-2.1-6.2-7.1-7.1 5-.9 6.2-2.1 7.1-7.1z" fill="#ffce3a"/></svg>
+    </div>
+    <div id="rmFormWrap">
+      <h2 id="rmTitle" class="lm-title">Регистрация</h2>
+      <p class="lm-sub">Почта, пароль и ИНН — реквизиты организации подтянутся из ФНС автоматически.</p>
+      <form id="rmForm" novalidate>
+        <div class="lm-row">
+          <div class="lm-field"><label class="lm-lbl" for="rmName">Имя</label><input id="rmName" class="lm-input" type="text" autocomplete="name" required placeholder="Как обращаться" /></div>
+          <div class="lm-field"><label class="lm-lbl" for="rmPhone">Телефон</label><input id="rmPhone" class="lm-input" type="tel" autocomplete="tel" required placeholder="+7 999 123-45-67" /></div>
+        </div>
+        <div class="lm-field"><label class="lm-lbl" for="rmEmail">Рабочая почта</label><input id="rmEmail" class="lm-input" type="email" autocomplete="email" required placeholder="you@company.ru" /></div>
+        <div class="lm-field">
+          <label class="lm-lbl" for="rmPass">Пароль</label>
+          <div class="lm-passwrap">
+            <input id="rmPass" class="lm-input" type="password" autocomplete="new-password" required />
+            <button type="button" class="lm-eye" id="rmEye" tabindex="-1" aria-label="Показать пароль"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+          <p class="lm-passhint" id="rmPassHint">Минимум 8 символов: строчная и заглавная буквы, цифра и спецсимвол.</p>
+        </div>
+        <div class="lm-field"><label class="lm-lbl" for="rmPass2">Повторите пароль</label><input id="rmPass2" class="lm-input" type="password" autocomplete="new-password" required /></div>
+        <div class="lm-field">
+          <label class="lm-lbl" for="rmInn">ИНН организации или ИП</label>
+          <input id="rmInn" class="lm-input" inputmode="numeric" autocomplete="off" required placeholder="10 или 12 цифр" style="font-family:'JetBrains Mono',ui-monospace,monospace;" />
+          <div class="lm-hint" id="rmInnHint"></div>
+        </div>
+        <div class="lm-consent">
+          <label><input type="checkbox" id="rmConsent" required /> <span>Согласен на обработку персональных данных и принимаю <a href="/privacy" target="_blank">Политику обработки ПДн</a>.</span></label>
+          <label><input type="checkbox" id="rmTerms" required /> <span>Соглашаюсь с <a href="/terms" target="_blank">Пользовательским соглашением</a>.</span></label>
+          <label><input type="checkbox" id="rmOffer" required /> <span>Принимаю условия <a href="/offer" target="_blank">Публичной оферты</a>.</span></label>
+        </div>
+        <div class="lm-error" id="rmError" hidden></div>
+        <button type="submit" class="btn btn-primary lm-submit" id="rmSubmit">Создать аккаунт</button>
+        <p class="lm-alt">Уже есть аккаунт? <a href="/login" data-login>Войти</a></p>
+      </form>
+    </div>
+    <div id="rmSuccess" class="lm-success" hidden>
+      <h2 class="lm-title">Подтвердите почту</h2>
+      <p>Мы отправили письмо на <span class="lm-mail" id="rmSentTo"></span>. Перейдите по ссылке из письма — после этого можно войти. Ссылка действует 24 часа; реквизиты по ИНН подтянутся из ФНС после подтверждения.</p>
+      <button type="button" class="btn btn-primary lm-submit" data-login>Перейти ко входу</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var modal = document.getElementById('registerModal');
+  if (!modal) return;
+  var login = document.getElementById('loginModal');
+  var form = document.getElementById('rmForm');
+  var wrap = document.getElementById('rmFormWrap');
+  var success = document.getElementById('rmSuccess');
+  var errEl = document.getElementById('rmError');
+  var submitEl = document.getElementById('rmSubmit');
+  var innEl = document.getElementById('rmInn');
+  var innHint = document.getElementById('rmInnHint');
+  var passEl = document.getElementById('rmPass');
+  var pass2El = document.getElementById('rmPass2');
+  var passHint = document.getElementById('rmPassHint');
+  var lastFocus = null;
+
+  function open(e){
+    if (e) e.preventDefault();
+    if (login) login.hidden = true; // если открыт вход — закрыть
+    lastFocus = document.activeElement;
+    errEl.hidden = true;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ document.getElementById('rmName').focus(); }, 40);
+  }
+  function close(){
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  window.__openRegister = open;
+
+  document.querySelectorAll('[data-register]').forEach(function(a){ a.addEventListener('click', open); });
+  document.getElementById('rmClose').addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !modal.hidden) close(); });
+
+  document.getElementById('rmEye').addEventListener('click', function(){ passEl.type = passEl.type === 'password' ? 'text' : 'password'; });
+
+  // Подсказка названия организации по ИНН (debounce 500мс)
+  var innTimer = null, innCtrl = null;
+  innEl.addEventListener('input', function(){
+    innEl.value = innEl.value.replace(/\D/g, '');
+    var v = innEl.value;
+    innHint.className = 'lm-hint'; innHint.textContent = '';
+    if (innTimer) clearTimeout(innTimer);
+    if (innCtrl) innCtrl.abort();
+    if (v.length !== 10 && v.length !== 12) return;
+    innHint.className = 'lm-hint loading'; innHint.textContent = 'Определяем организацию…';
+    innTimer = setTimeout(async function(){
+      innCtrl = new AbortController();
+      try {
+        var r = await fetch('/api/inn-lookup?inn=' + v, { signal: innCtrl.signal });
+        var d = await r.json();
+        if (d.name) { innHint.className = 'lm-hint found'; innHint.textContent = d.name; }
+        else { innHint.className = 'lm-hint notfound'; innHint.textContent = 'Организация по этому ИНН не найдена'; }
+      } catch (_) { innHint.className = 'lm-hint'; innHint.textContent = ''; }
+    }, 500);
+  });
+
+  // Совпадение паролей
+  function checkPass(){
+    if (pass2El.value && passEl.value !== pass2El.value) { passHint.classList.add('bad'); passHint.textContent = 'Пароли не совпадают.'; }
+    else { passHint.classList.remove('bad'); passHint.textContent = 'Минимум 8 символов: строчная и заглавная буквы, цифра и спецсимвол.'; }
+  }
+  passEl.addEventListener('input', checkPass);
+  pass2El.addEventListener('input', checkPass);
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    errEl.hidden = true;
+    var name = document.getElementById('rmName').value.trim();
+    var phone = document.getElementById('rmPhone').value.trim();
+    var email = document.getElementById('rmEmail').value.trim();
+    var password = passEl.value, password2 = pass2El.value;
+    var inn = innEl.value;
+    if (!document.getElementById('rmConsent').checked) { errEl.textContent = 'Подтвердите согласие на обработку персональных данных.'; errEl.hidden = false; return; }
+    if (!document.getElementById('rmTerms').checked) { errEl.textContent = 'Подтвердите согласие с Пользовательским соглашением.'; errEl.hidden = false; return; }
+    if (!document.getElementById('rmOffer').checked) { errEl.textContent = 'Подтвердите принятие условий Публичной оферты.'; errEl.hidden = false; return; }
+    if (password !== password2) { errEl.textContent = 'Пароли не совпадают.'; errEl.hidden = false; return; }
+    submitEl.disabled = true; submitEl.textContent = 'Создаём аккаунт…';
+    try {
+      var res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password, inn: inn, name: name, phone: phone }) });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok) { errEl.textContent = data.error || 'Не получилось зарегистрироваться. Попробуйте ещё раз.'; errEl.hidden = false; return; }
+      document.getElementById('rmSentTo').textContent = email;
+      wrap.hidden = true; success.hidden = false;
+    } catch (_) { errEl.textContent = 'Нет связи с сервером. Попробуйте ещё раз.'; errEl.hidden = false; }
+    finally { submitEl.disabled = false; submitEl.textContent = 'Создать аккаунт'; }
+  });
 })();
 </script>
 </body>
