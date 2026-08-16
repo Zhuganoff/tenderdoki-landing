@@ -949,6 +949,12 @@
   .sp-block b { color:#585379; font-weight:600; }
   .sp-cta { margin-top:auto; background:var(--blue-600); color:#fff; text-align:center; font-size:12px; font-weight:600; padding:8px 10px; border-radius:10px; }
   @media (max-width: 520px) { .sp-cols { grid-template-columns:1fr; } }
+  /* Цикл hero-виджета: поиск → анализ (кроссфейд) */
+  .hero-flip { position:relative; }
+  .hf-pane { transition: opacity .5s ease, transform .5s ease; }
+  .hf-pane.hf-hidden { opacity:0; pointer-events:none; position:absolute; inset:0; transform: translateY(10px) scale(.985); }
+  .sp-cta { transition: transform .2s ease, box-shadow .2s ease; }
+  .sp-cta.pressed { transform: scale(.96); box-shadow: 0 0 0 4px rgba(135,129,198,.25); }
 
   @media (max-width: 640px) {
     .sd-go { display: none; } /* на мобиле демо-строка не должна ломаться в 2 ряда */
@@ -1057,42 +1063,111 @@
     </div>
 
     <div class="hero-right">
-      <!-- Виджет «поиск + предпросмотр» (эхо главного экрана кабинета; анализ показан ниже в #report) -->
+      <!-- Живой виджет-цикл: поиск закупок → имитация анализа → готовый отчёт (JS ниже).
+           Тендеры вымышленные; выбранная «офисная мебель» совпадает с примером отчёта в #report. -->
       <div class="hero-art hero-enter">
-        <div class="sp-widget">
-          <div class="sd-bar" style="margin:0;">
-            <svg class="sd-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <span class="sd-query">мазут в Сибири до 10 млн</span>
-            <span class="sd-ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c.7 3.9 1.6 4.8 5.5 5.5-3.9.7-4.8 1.6-5.5 5.5-.7-3.9-1.6-4.8-5.5-5.5 3.9-.7 4.8-1.6 5.5-5.5z"/></svg>ИИ</span>
-            <span class="sd-go">Найти</span>
-          </div>
-          <div class="sp-cols">
-            <div class="sp-list">
-              <div class="sp-row sp-sel">
-                <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Омская обл.</span><b class="sp-sum">9,08 млн ₽</b></div>
-                <div class="sp-name">Поставка мазута топочного М-100</div>
-                <div class="sp-due">Осталось 8 дней<span>до 24.08</span></div>
+        <div class="hero-flip" id="heroFlip">
+
+          <!-- ФАЗА 1: поиск + предпросмотр -->
+          <div class="hf-pane hf-search" data-pane="search">
+            <div class="sp-widget">
+              <div class="sd-bar" style="margin:0;">
+                <svg class="sd-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                <span class="sd-query">офисная мебель до 3 млн</span>
+                <span class="sd-ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c.7 3.9 1.6 4.8 5.5 5.5-3.9.7-4.8 1.6-5.5 5.5-.7-3.9-1.6-4.8-5.5-5.5 3.9-.7 4.8-1.6 5.5-5.5z"/></svg>ИИ</span>
+                <span class="sd-go">Найти</span>
               </div>
-              <div class="sp-row">
-                <div class="sp-meta"><span class="sp-law">223-ФЗ</span><span class="sp-reg">Красноярский край</span><b class="sp-sum">4,4 млн ₽</b></div>
-                <div class="sp-name">Мазут для нужд котельной</div>
-                <div class="sp-due">Осталось 12 дней<span>до 28.08</span></div>
-              </div>
-              <div class="sp-row">
-                <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Иркутская обл.</span><b class="sp-sum">7,3 млн ₽</b></div>
-                <div class="sp-name">Топливо котельное, доставка</div>
-                <div class="sp-due">Осталось 5 дней<span>до 21.08</span></div>
+              <div class="sp-cols">
+                <div class="sp-list">
+                  <div class="sp-row sp-sel">
+                    <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Москва</span><b class="sp-sum">2,48 млн ₽</b></div>
+                    <div class="sp-name">Поставка и монтаж офисной мебели</div>
+                    <div class="sp-due">Осталось 9 дней<span>до 14.07</span></div>
+                  </div>
+                  <div class="sp-row">
+                    <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Томск</span><b class="sp-sum">1,9 млн ₽</b></div>
+                    <div class="sp-name">Ремонт кровли школы № 12</div>
+                    <div class="sp-due">Осталось 12 дней<span>до 17.07</span></div>
+                  </div>
+                  <div class="sp-row">
+                    <div class="sp-meta"><span class="sp-law">223-ФЗ</span><span class="sp-reg">Казань</span><b class="sp-sum">640 тыс ₽</b></div>
+                    <div class="sp-name">Поставка бумаги А4 и канцтоваров</div>
+                    <div class="sp-due">Осталось 6 дней<span>до 11.07</span></div>
+                  </div>
+                  <div class="sp-row">
+                    <div class="sp-meta"><span class="sp-law">44-ФЗ</span><span class="sp-reg">Омск</span><b class="sp-sum">3,2 млн ₽</b></div>
+                    <div class="sp-name">Уборка служебных помещений</div>
+                    <div class="sp-due">Осталось 15 дней<span>до 20.07</span></div>
+                  </div>
+                </div>
+                <div class="sp-prev">
+                  <div class="sp-ptitle">Поставка и монтаж офисной мебели</div>
+                  <div class="sp-pprice">2 480 000 ₽</div>
+                  <div class="sp-block"><span class="sp-bl">Прогноз торгов</span><b>снижение ~12% · цена ~2,2 млн ₽</b></div>
+                  <div class="sp-block"><span class="sp-bl">Вероятные участники</span><b>4 конкурента · ИИ-оценка шансов</b></div>
+                  <div class="sp-block"><span class="sp-bl">Работа комиссии</span><b>обычно 3–5 заявок</b></div>
+                  <div class="sp-cta" id="spCta">Проанализировать тендер →</div>
+                </div>
               </div>
             </div>
-            <div class="sp-prev">
-              <div class="sp-ptitle">Поставка мазута топочного М-100</div>
-              <div class="sp-pprice">9 079 206 ₽</div>
-              <div class="sp-block"><span class="sp-bl">Прогноз торгов</span><b>снижение ~18% · цена ~7,4 млн ₽</b></div>
-              <div class="sp-block"><span class="sp-bl">Вероятные участники</span><b>5 конкурентов · ИИ-оценка шансов</b></div>
-              <div class="sp-block"><span class="sp-bl">Работа комиссии</span><b>в прошлый раз — 4 заявки</b></div>
-              <div class="sp-cta">Проанализировать тендер →</div>
+          </div>
+
+          <!-- ФАЗА 2: имитация анализа → готовый отчёт (как «раньше», цикл JS) -->
+          <div class="hf-pane hf-analysis hf-hidden" data-pane="analysis">
+            <div class="td-widget">
+              <div class="td-card">
+                <div class="td-head">
+                  <div class="td-dots"><span></span><span></span><span></span></div>
+                  <div class="td-url">zakupki.gov.ru/…0173200…000123</div>
+                </div>
+                <div class="td-statusbar">
+                  <span id="td-spin" class="spinning"></span>
+                  <span id="td-status">Скачиваем документацию…</span>
+                </div>
+                <div class="td-body">
+                  <div class="td-row td-rephead" data-step="1">
+                    <div>
+                      <span class="td-vbadge">Можно участвовать</span>
+                      <p class="td-vtitle">Поставка офисной мебели</p>
+                      <p class="td-vsub">Надёжный заказчик · выгодная оплата</p>
+                    </div>
+                    <div class="td-ring">
+                      <svg viewBox="0 0 96 96" aria-hidden>
+                        <defs><linearGradient id="hr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient></defs>
+                        <circle cx="48" cy="48" r="40" fill="none" stroke="#eceaf6" stroke-width="8"/>
+                        <circle cx="48" cy="48" r="40" fill="none" stroke="url(#hr)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="37.7" transform="rotate(-90 48 48)"/>
+                        <text x="48" y="45" text-anchor="middle" font-size="24" font-weight="800" fill="#2b2833" font-family="Unbounded, system-ui, sans-serif">85</text>
+                        <text x="48" y="60" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="Golos Text, system-ui, sans-serif" letter-spacing="1">балл</text>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="td-row td-repmetrics" data-step="2">
+                    <div class="tdm"><span>НМЦ</span><b>2,48 млн ₽</b></div>
+                    <div class="tdm"><span>Обеспечение</span><b>1%</b></div>
+                    <div class="tdm"><span>Подача до</span><b>14.07</b></div>
+                  </div>
+                  <div class="td-row td-repchecks" data-step="3">
+                    <div class="td-repcheck"><span class="tick">✓</span> Заказчик проверен — стоп-факторов нет</div>
+                    <div class="td-repcheck"><span class="tick">✓</span> Договор проверен — штраф 0,1%/день</div>
+                    <div class="td-repcheck"><span class="tick">✓</span> Формы заявки готовы + чек-лист</div>
+                  </div>
+                  <div class="td-row" data-step="4">
+                    <div class="td-report">
+                      <div class="td-report-left">
+                        <div class="td-report-icon"><i class="ti ti-checks"></i></div>
+                        <div>
+                          <p class="td-report-title">Отчёт готов</p>
+                          <p class="td-report-sub">Заказчик, договор и формы — в одном месте</p>
+                        </div>
+                      </div>
+                      <button class="td-report-btn">Открыть отчёт →</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -2024,6 +2099,57 @@
 </script>
 
 
+
+<!-- Hero-цикл: поиск → имитация анализа → готовый отчёт → снова поиск -->
+<script>
+(function(){
+  var flip = document.getElementById('heroFlip');
+  if (!flip) return;
+  var panes = { search: flip.querySelector('[data-pane="search"]'), analysis: flip.querySelector('[data-pane="analysis"]') };
+  var cta = document.getElementById('spCta');
+  var status = document.getElementById('td-status');
+  var spin = document.getElementById('td-spin');
+  var rows = Array.prototype.slice.call(flip.querySelectorAll('.td-row'));
+  var stages = [
+    { t:'Скачиваем документацию…', show:null, delay:1100 },
+    { t:'Проверяем заказчика…',    show:1,    delay:1300 },
+    { t:'Анализируем договор…',    show:2,    delay:1300 },
+    { t:'Собираем формы в пакет…', show:3,    delay:1300 },
+    { t:'Формируем отчёт…',        show:null, delay:900  },
+    { t:'✓ Анализ готов', done:true, show:4,  delay:3200 }
+  ];
+  function showPane(name){
+    for (var k in panes) panes[k].classList.toggle('hf-hidden', k !== name);
+  }
+  function resetAnalysis(){
+    rows.forEach(function(r){ r.style.opacity=0; r.style.transform='translateY(8px)'; });
+    spin.className='spinning'; spin.textContent=''; spin.style.color=''; spin.style.fontSize='';
+    status.textContent='Скачиваем документацию…'; status.style.color='var(--text-primary)';
+  }
+  function playAnalysis(i, doneCb){
+    if (i >= stages.length){ doneCb(); return; }
+    var s = stages[i];
+    status.textContent = s.t;
+    if (s.show){ var r = rows.filter(function(x){ return x.dataset.step == s.show; })[0]; if (r){ r.style.opacity=1; r.style.transform='translateY(0)'; } }
+    if (s.done){ spin.className='done'; spin.textContent='✓'; spin.style.color='var(--success)'; spin.style.fontSize='16px'; status.style.color='var(--success)'; }
+    setTimeout(function(){ playAnalysis(i+1, doneCb); }, s.delay);
+  }
+  function cycle(){
+    showPane('search');
+    setTimeout(function(){
+      if (cta) cta.classList.add('pressed');
+      setTimeout(function(){
+        if (cta) cta.classList.remove('pressed');
+        resetAnalysis();
+        showPane('analysis');
+        setTimeout(function(){ playAnalysis(0, function(){ cycle(); }); }, 350);
+      }, 450);
+    }, 3400);
+  }
+  resetAnalysis();
+  cycle();
+})();
+</script>
 
 <!-- Cookie-предупреждение (152-ФЗ / раздел 9 Политики). Самодостаточно: без внешних зависимостей. -->
 <div id="cookie-banner" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie"
